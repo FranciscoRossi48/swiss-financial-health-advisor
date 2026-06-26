@@ -1,0 +1,6 @@
+segment,avg_income,avg_savings_rate,avg_debt_to_income,avg_discretionary_ratio,income_cv,financial_health_score,segment_label
+0,6146.6,0.124,0.081,0.209,0.131,39.206,Balanced user
+1,6307.421,0.006,0.24,0.186,0.156,16.537,Debt pressure
+2,7216.516,0.251,0.042,0.154,0.078,68.768,Stable saver
+3,6837.825,0.052,0.07,0.32,0.118,36.33,High discretionary
+4,6588.666,0.179,0.085,0.183,0.31,36.188,Variable income
