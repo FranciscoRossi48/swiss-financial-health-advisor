@@ -24,6 +24,6 @@ What I built:
 
 This project helped me connect academic research with implementation: not only asking what could be built, but also how it could be made understandable and actionable for real users.
 
-Repository: [add GitHub link here]
+Repository: https://github.com/FranciscoRossi48/swiss-financial-health-advisor
 
 #DataScience #Fintech #OpenBanking #Analytics #MachineLearning #Switzerland #PortfolioProject
