@@ -23,6 +23,14 @@ The context is inspired by the Swiss fintech ecosystem and by a final degree pro
 5. Produces prescriptive recommendations based on each user's weakest dimension.
 6. Presents the output in a Streamlit dashboard.
 
+## Analytical Validation
+
+The repository includes a notebook that validates the main analytical assumptions behind the MVP:
+
+[notebooks/01_exploratory_analysis_and_model_validation.ipynb](notebooks/01_exploratory_analysis_and_model_validation.ipynb)
+
+It covers synthetic data coverage, score distribution, feature relationships, segmentation quality, and recommendation alignment.
+
 ## Demo Metrics
 
 The current generated demo includes:
@@ -158,7 +166,6 @@ Important design choices:
 
 ## Roadmap
 
-- Add a notebook with exploratory analysis and model validation.
 - Add cohort-level trend analysis.
 - Add SHAP-style explanations if predictive models are introduced.
 - Add a FastAPI scoring endpoint.
