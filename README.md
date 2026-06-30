@@ -136,11 +136,39 @@ Streamlit dashboard
     └── test_pipeline.py
 ```
 
-## Quick Start
+## How To Run Locally
+
+Prerequisites:
+
+- Git
+- Python 3.10 or newer
+
+Clone the repository:
+
+```bash
+git clone https://github.com/FranciscoRossi48/swiss-financial-health-advisor.git
+cd swiss-financial-health-advisor
+```
+
+Create and activate a virtual environment.
+
+macOS/Linux:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
+```
+
+Windows PowerShell:
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+Install dependencies, generate the demo data, and start the dashboard:
+
+```bash
 pip install -r requirements.txt
 python scripts/build_demo_data.py
 streamlit run app/streamlit_app.py
@@ -151,6 +179,16 @@ Then open:
 ```text
 http://localhost:8501
 ```
+
+What the commands do:
+
+- `python -m venv .venv` creates an isolated Python environment for the project.
+- `source .venv/bin/activate` or `.venv\Scripts\Activate.ps1` activates that environment.
+- `pip install -r requirements.txt` installs the libraries used by the app and analytics pipeline.
+- `python scripts/build_demo_data.py` regenerates the synthetic CSV files used by the dashboard.
+- `streamlit run app/streamlit_app.py` starts the local web app.
+
+To stop the dashboard, press `Ctrl+C` in the terminal where Streamlit is running.
 
 ## Regulated AI Considerations
 
