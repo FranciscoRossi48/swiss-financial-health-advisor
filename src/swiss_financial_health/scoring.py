@@ -3,7 +3,6 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-
 SCORE_WEIGHTS = {
     "liquidity_score": 0.30,
     "income_stability_score": 0.20,

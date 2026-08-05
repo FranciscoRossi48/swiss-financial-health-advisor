@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import pandas as pd
 
+from swiss_financial_health.validation import validate_transactions
+
 
 def build_monthly_features(transactions: pd.DataFrame) -> pd.DataFrame:
+    validate_transactions(transactions)
     df = transactions.copy()
     df["month"] = pd.to_datetime(df["date"]).dt.to_period("M").dt.to_timestamp()
 
@@ -46,15 +49,15 @@ def build_monthly_features(transactions: pd.DataFrame) -> pd.DataFrame:
     ].fillna(0)
 
     features["net_cashflow"] = features["income"] - features["expense"] - features["savings"]
-    features["savings_rate"] = safe_ratio(features["savings"] + features["net_cashflow"].clip(lower=0), features["income"])
+    features["savings_rate"] = safe_ratio(
+        features["savings"] + features["net_cashflow"].clip(lower=0), features["income"]
+    )
     features["expense_ratio"] = safe_ratio(features["expense"], features["income"])
     features["debt_to_income"] = safe_ratio(features["debt_payments"], features["income"])
     features["discretionary_ratio"] = safe_ratio(features["discretionary_spend"], features["income"])
 
     income_stats = (
-        features.groupby("user_id")["income"]
-        .agg(avg_income="mean", income_std="std")
-        .reset_index()
+        features.groupby("user_id")["income"].agg(avg_income="mean", income_std="std").reset_index()
     )
     income_stats["income_cv"] = safe_ratio(income_stats["income_std"].fillna(0), income_stats["avg_income"])
 

@@ -1,5 +1,7 @@
 # Swiss Financial Health Advisor
 
+[![CI](https://github.com/FranciscoRossi48/swiss-financial-health-advisor/actions/workflows/ci.yml/badge.svg)](https://github.com/FranciscoRossi48/swiss-financial-health-advisor/actions/workflows/ci.yml)
+
 Prescriptive analytics prototype for personal financial health and credit readiness in a Swiss neobank context.
 
 This project turns a final degree thesis concept into a working data science product prototype: synthetic Open Banking-style transactions are transformed into customer segments, an explainable financial health score, a credit readiness signal, risk flags, and personalized recommendations.
@@ -22,7 +24,8 @@ The context is inspired by the Swiss fintech ecosystem and by a final degree pro
 4. Segments users with K-Means clustering.
 5. Adds a Credit Readiness Score for non-decisional affordability guidance.
 6. Produces risk flags and prescriptive recommendations based on each user's weakest dimensions.
-7. Presents the output in a Streamlit dashboard.
+7. Simulates whether a hypothetical new loan fits a user's current financial profile.
+8. Presents the output in a Streamlit dashboard.
 
 ## Analytical Validation
 
@@ -90,6 +93,8 @@ Explanation: Average savings rate is 4.7%, below a sustainable long-term target.
 
 This is rule-based by design. In a regulated financial context, a transparent baseline is often a better first version than an opaque model that is difficult to audit.
 
+Every threshold used across the scoring, credit readiness, and risk-flagging logic is documented and justified in [docs/scoring-methodology.md](docs/scoring-methodology.md).
+
 ## Credit Readiness Layer
 
 The credit readiness layer is not a credit approval model. It is a decision-support signal that estimates whether a user appears financially prepared to assume additional credit exposure.
@@ -106,17 +111,24 @@ It combines:
 
 The system also generates explainable risk flags such as high debt burden, variable income, thin cashflow buffer, low savings discipline, and high discretionary spend.
 
+## Loan Affordability Simulator
+
+The dashboard's Loan Simulator tab lets a user try a hypothetical loan amount, interest rate, and term against their own profile. It applies the same affordability guideline documented in [docs/scoring-methodology.md](docs/scoring-methodology.md) (total debt service within roughly a third of gross income) and reports the resulting monthly payment, debt-to-income, and projected free cashflow, with an affordable / marginal / not recommended verdict. Like the credit readiness score, this is a decision-support estimate, not a loan offer or approval.
+
 ## Architecture
 
 ```text
 Synthetic transactions
         |
         v
+Input validation
+        |
+        v
 Monthly feature engineering
         |
         +--> Financial Health Score
         |
-        +--> Credit Readiness Score + Risk Flags
+        +--> Credit Readiness Score + Risk Flags --> Loan Affordability Simulator
         |
         +--> K-Means segmentation
         |
@@ -141,20 +153,31 @@ Streamlit dashboard
 │   ├── synthetic_transactions.csv
 │   └── user_monthly_features.csv
 ├── docs/
-│   └── assets/
-│       └── dashboard-overview.png
+│   ├── assets/
+│   │   └── dashboard-overview.png
+│   └── scoring-methodology.md
 ├── scripts/
 │   └── build_demo_data.py
 ├── src/
 │   └── swiss_financial_health/
+│       ├── affordability.py
 │       ├── clustering.py
 │       ├── credit_readiness.py
 │       ├── data_generation.py
 │       ├── features.py
 │       ├── recommendations.py
-│       └── scoring.py
+│       ├── scoring.py
+│       └── validation.py
 └── tests/
-    └── test_pipeline.py
+    ├── test_affordability.py
+    ├── test_clustering.py
+    ├── test_credit_readiness.py
+    ├── test_data_generation.py
+    ├── test_features.py
+    ├── test_pipeline.py
+    ├── test_recommendations.py
+    ├── test_scoring.py
+    └── test_validation.py
 ```
 
 ## How To Run Locally
@@ -211,6 +234,34 @@ What the commands do:
 
 To stop the dashboard, press `Ctrl+C` in the terminal where Streamlit is running.
 
+## API
+
+A read-only FastAPI service exposes the same precomputed scores and the loan affordability
+simulation over HTTP, for programmatic access outside the Streamlit dashboard. Start it after
+generating the demo data:
+
+```bash
+uvicorn app.api:app --reload
+```
+
+Then open `http://localhost:8000/docs` for interactive API documentation, or try:
+
+```bash
+curl http://localhost:8000/users/U0001
+curl -X POST http://localhost:8000/users/U0001/loan-affordability \
+  -H "Content-Type: application/json" \
+  -d '{"loan_amount": 10000, "annual_rate": 0.05, "term_years": 3}'
+```
+
+| Endpoint | Description |
+| --- | --- |
+| `GET /health` | Liveness check. |
+| `GET /users` | List all synthetic user IDs. |
+| `GET /users/{user_id}` | Financial health and credit readiness scores for one user. |
+| `GET /users/{user_id}/risk-flags` | Credit readiness risk flags for one user. |
+| `GET /users/{user_id}/recommendation` | Priority recommendation for one user. |
+| `POST /users/{user_id}/loan-affordability` | Simulate a hypothetical loan against one user's profile. |
+
 ## Regulated AI Considerations
 
 This project is deliberately framed as a decision-support prototype, not as an automated financial decision system.
@@ -229,9 +280,7 @@ Important design choices:
 
 - Add cohort-level trend analysis.
 - Add SHAP-style explanations if predictive models are introduced.
-- Add a FastAPI scoring endpoint.
 - Add multi-source Open Banking simulation.
-- Add a loan affordability simulator.
 - Add Docker support for reproducible deployment.
 
 ## Disclaimer

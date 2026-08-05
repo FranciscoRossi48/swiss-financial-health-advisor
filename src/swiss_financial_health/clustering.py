@@ -5,7 +5,6 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import StandardScaler
 
-
 CLUSTER_FEATURES = [
     "avg_income",
     "avg_savings_rate",
@@ -15,7 +14,9 @@ CLUSTER_FEATURES = [
 ]
 
 
-def fit_user_segments(scored_users: pd.DataFrame, n_clusters: int = 5, random_state: int = 42) -> tuple[pd.DataFrame, pd.DataFrame, float]:
+def fit_user_segments(
+    scored_users: pd.DataFrame, n_clusters: int = 5, random_state: int = 42
+) -> tuple[pd.DataFrame, pd.DataFrame, float]:
     df = scored_users.copy()
     scaler = StandardScaler()
     matrix = scaler.fit_transform(df[CLUSTER_FEATURES])
@@ -26,10 +27,7 @@ def fit_user_segments(scored_users: pd.DataFrame, n_clusters: int = 5, random_st
     score = float(silhouette_score(matrix, labels))
 
     centroids = (
-        df.groupby("segment")[CLUSTER_FEATURES + ["financial_health_score"]]
-        .mean()
-        .round(3)
-        .reset_index()
+        df.groupby("segment")[CLUSTER_FEATURES + ["financial_health_score"]].mean().round(3).reset_index()
     )
     centroids["segment_label"] = centroids.apply(label_segment, axis=1)
     df = df.merge(centroids[["segment", "segment_label"]], on="segment", how="left")

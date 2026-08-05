@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import pandas as pd
 
-
 DIMENSION_LABELS = {
     "liquidity_score": "liquidity",
     "income_stability_score": "income stability",
@@ -44,11 +43,19 @@ def recommendation_for_dimension(dimension: str, record: dict[str, object]) -> s
 
 def explanation_for_dimension(dimension: str, record: dict[str, object]) -> str:
     if dimension == "liquidity_score":
-        return f"Average monthly net cashflow is CHF {record['avg_net_cashflow']:.0f}, limiting resilience to unexpected expenses."
+        return (
+            f"Average monthly net cashflow is CHF {record['avg_net_cashflow']:.0f}, "
+            "limiting resilience to unexpected expenses."
+        )
     if dimension == "income_stability_score":
-        return f"Income coefficient of variation is {record['income_cv']:.2f}, indicating relatively uneven inflows."
+        return (
+            f"Income coefficient of variation is {record['income_cv']:.2f}, "
+            "indicating relatively uneven inflows."
+        )
     if dimension == "savings_score":
-        return f"Average savings rate is {record['avg_savings_rate']:.1%}, below a sustainable long-term target."
+        return (
+            f"Average savings rate is {record['avg_savings_rate']:.1%}, below a sustainable long-term target."
+        )
     if dimension == "debt_score":
         return f"Debt payments represent {record['avg_debt_to_income']:.1%} of monthly income."
     raise ValueError(f"Unknown dimension: {dimension}")

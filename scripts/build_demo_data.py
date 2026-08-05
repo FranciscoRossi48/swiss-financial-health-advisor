@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from pathlib import Path
 import sys
-
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -13,7 +12,6 @@ from swiss_financial_health.data_generation import generate_synthetic_transactio
 from swiss_financial_health.features import build_monthly_features, build_user_summary
 from swiss_financial_health.recommendations import generate_recommendations
 from swiss_financial_health.scoring import compute_financial_health_score
-
 
 DATA = ROOT / "data"
 

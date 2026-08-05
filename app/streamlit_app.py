@@ -1,16 +1,17 @@
 from __future__ import annotations
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 DATA = ROOT / "data"
+
+from swiss_financial_health.affordability import simulate_loan_affordability
 
 
 st.set_page_config(page_title="Swiss Financial Health Advisor", page_icon="CHF", layout="wide")
@@ -48,7 +49,8 @@ users, monthly, recommendations, risk_flags, centroids = load_data()
 
 st.title("Swiss Financial Health Advisor")
 st.caption(
-    "Synthetic prescriptive analytics prototype for financial health and credit readiness in a Swiss neobank context."
+    "Synthetic prescriptive analytics prototype for financial health and credit readiness "
+    "in a Swiss neobank context."
 )
 
 selected_user = st.selectbox("User", users["user_id"].tolist(), label_visibility="collapsed")
@@ -58,7 +60,9 @@ user_flags = risk_flags.loc[risk_flags["user_id"] == selected_user].copy()
 user_monthly = monthly.loc[monthly["user_id"] == selected_user].copy()
 
 metric_cols = st.columns(4)
-metric_cols[0].metric("Financial Health", f"{user['financial_health_score']:.1f}/100", user["health_band"].title())
+metric_cols[0].metric(
+    "Financial Health", f"{user['financial_health_score']:.1f}/100", user["health_band"].title()
+)
 metric_cols[1].metric(
     "Credit Readiness",
     f"{user['credit_readiness_score']:.1f}/100",
@@ -67,8 +71,15 @@ metric_cols[1].metric(
 metric_cols[2].metric("Segment", user["segment_label"])
 metric_cols[3].metric("Priority", rec["priority_dimension"].title())
 
-overview_tab, health_tab, credit_tab, recommendations_tab, segments_tab = st.tabs(
-    ["Overview", "Financial Health", "Credit Readiness", "Recommendations", "Segment Insights"]
+overview_tab, health_tab, credit_tab, recommendations_tab, loan_tab, segments_tab = st.tabs(
+    [
+        "Overview",
+        "Financial Health",
+        "Credit Readiness",
+        "Recommendations",
+        "Loan Simulator",
+        "Segment Insights",
+    ]
 )
 
 with overview_tab:
@@ -132,7 +143,13 @@ with credit_tab:
             "savings_discipline_score",
             "spending_control_score",
         ],
-        ["Income reliability", "Debt capacity", "Cashflow resilience", "Savings discipline", "Spending control"],
+        [
+            "Income reliability",
+            "Debt capacity",
+            "Cashflow resilience",
+            "Savings discipline",
+            "Spending control",
+        ],
     )
     st.plotly_chart(score_bar(credit_scores, "Credit Readiness Score Breakdown"), use_container_width=True)
 
@@ -165,7 +182,44 @@ with recommendations_tab:
     )
 
     st.caption(
-        "Credit readiness is an educational decision-support signal. It is not an approval, rejection, pricing, or eligibility decision."
+        "Credit readiness is an educational decision-support signal. It is not an approval, "
+        "rejection, pricing, or eligibility decision."
+    )
+
+with loan_tab:
+    st.subheader("Loan Affordability Simulator")
+    st.caption(
+        "Estimate whether a hypothetical new loan fits this user's current financial profile, "
+        "using the same transparent affordability guideline as the credit readiness signal."
+    )
+
+    input_cols = st.columns(3)
+    loan_amount = input_cols[0].number_input(
+        "Loan amount (CHF)", min_value=500.0, max_value=200_000.0, value=10_000.0, step=500.0
+    )
+    annual_rate_pct = input_cols[1].slider("Annual interest rate (%)", 0.0, 15.0, 5.0, step=0.1)
+    term_years = input_cols[2].slider("Term (years)", 1, 10, 3)
+
+    result = simulate_loan_affordability(
+        avg_income=user["avg_income"],
+        avg_net_cashflow=user["avg_net_cashflow"],
+        avg_debt_to_income=user["avg_debt_to_income"],
+        loan_amount=loan_amount,
+        annual_rate=annual_rate_pct / 100,
+        term_years=term_years,
+    )
+
+    result_cols = st.columns(3)
+    result_cols[0].metric("Monthly payment", f"CHF {result.monthly_payment:,.0f}")
+    result_cols[1].metric("Resulting debt-to-income", f"{result.resulting_debt_to_income:.1%}")
+    result_cols[2].metric("Projected free cashflow", f"CHF {result.projected_free_cashflow:,.0f}")
+
+    verdict_banner = {"affordable": st.success, "marginal": st.warning, "not recommended": st.error}
+    verdict_banner[result.verdict](f"**{result.verdict.title()}** — {result.explanation}")
+
+    st.caption(
+        "This simulation is an educational decision-support estimate, not a loan offer, "
+        "approval, or pricing decision."
     )
 
 with segments_tab:
@@ -206,5 +260,6 @@ with segments_tab:
         )
 
 st.caption(
-    "Educational prototype with synthetic data. Outputs are explainable analytics signals, not regulated financial advice."
+    "Educational prototype with synthetic data. Outputs are explainable analytics signals, "
+    "not regulated financial advice."
 )

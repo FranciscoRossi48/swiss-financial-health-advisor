@@ -1,7 +1,4 @@
-pandas>=2.2,<3.1
-numpy>=1.26,<2.6
-scikit-learn>=1.4,<2.0
-streamlit>=1.58,<1.60
-starlette<1.4
-plotly>=5.22,<7.0
-pytest>=8.2,<10.0
+# Dependency versions are declared once, in pyproject.toml.
+# This file exists only so `pip install -r requirements.txt` keeps working
+# for readers who skip the "editable install" step in the README.
+-e .[app,api,dev]

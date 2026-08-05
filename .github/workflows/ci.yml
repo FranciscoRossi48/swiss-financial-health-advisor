@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -e .[app,api,dev]
+
+      - name: Lint with ruff
+        run: |
+          ruff check src/ tests/ app/ scripts/
+          ruff format --check src/ tests/ app/ scripts/
+
+      - name: Run tests
+        run: pytest tests/ -v
+
+      - name: Verify demo data build
+        run: python scripts/build_demo_data.py

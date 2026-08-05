@@ -54,7 +54,9 @@ def generate_synthetic_transactions(
         user_id = f"U{user_idx:04d}"
 
         for month in months:
-            income = max(1200, rng.normal(profile.income_mean, profile.income_mean * profile.income_volatility))
+            income = max(
+                1200, rng.normal(profile.income_mean, profile.income_mean * profile.income_volatility)
+            )
             income_date = month + pd.Timedelta(days=int(rng.integers(0, 4)))
             rows.append(
                 {
@@ -98,7 +100,11 @@ def generate_synthetic_transactions(
             for category, monthly_amount in expense_plan.items():
                 if monthly_amount <= 0:
                     continue
-                tx_count = 1 if category in {"rent", "insurance", "debt_payment", "savings_transfer"} else int(rng.integers(2, 8))
+                tx_count = (
+                    1
+                    if category in {"rent", "insurance", "debt_payment", "savings_transfer"}
+                    else int(rng.integers(2, 8))
+                )
                 splits = rng.dirichlet(np.ones(tx_count)) * monthly_amount
                 tx_type = "savings" if category == "savings_transfer" else "expense"
                 for amount in splits:

@@ -5,7 +5,6 @@ import pandas as pd
 
 from swiss_financial_health.scoring import scale_higher_is_better, scale_lower_is_better
 
-
 CREDIT_READINESS_WEIGHTS = {
     "income_reliability_score": 0.25,
     "debt_capacity_score": 0.25,
@@ -47,7 +46,9 @@ def build_risk_flags(credit_users: pd.DataFrame) -> pd.DataFrame:
                     "user_id": record["user_id"],
                     "flag": "No major risk flags",
                     "severity": "low",
-                    "explanation": "The synthetic profile does not show a dominant credit readiness weakness.",
+                    "explanation": (
+                        "The synthetic profile does not show a dominant credit readiness weakness."
+                    ),
                 }
             )
             continue
@@ -66,7 +67,9 @@ def risk_flags_for_user(record: dict[str, object]) -> list[dict[str, str]]:
             {
                 "flag": "High debt burden",
                 "severity": "high",
-                "explanation": f"Debt payments represent {record['avg_debt_to_income']:.1%} of average monthly income.",
+                "explanation": (
+                    f"Debt payments represent {record['avg_debt_to_income']:.1%} of average monthly income."
+                ),
             }
         )
     elif record["avg_debt_to_income"] >= 0.18:
@@ -74,7 +77,10 @@ def risk_flags_for_user(record: dict[str, object]) -> list[dict[str, str]]:
             {
                 "flag": "Elevated debt burden",
                 "severity": "medium",
-                "explanation": f"Debt payments are above a conservative affordability threshold at {record['avg_debt_to_income']:.1%}.",
+                "explanation": (
+                    "Debt payments are above a conservative affordability threshold at "
+                    f"{record['avg_debt_to_income']:.1%}."
+                ),
             }
         )
 
@@ -83,7 +89,10 @@ def risk_flags_for_user(record: dict[str, object]) -> list[dict[str, str]]:
             {
                 "flag": "Highly variable income",
                 "severity": "high",
-                "explanation": f"Income coefficient of variation is {record['income_cv']:.2f}, reducing repayment predictability.",
+                "explanation": (
+                    f"Income coefficient of variation is {record['income_cv']:.2f}, "
+                    "reducing repayment predictability."
+                ),
             }
         )
     elif record["income_cv"] >= 0.22:
@@ -91,7 +100,10 @@ def risk_flags_for_user(record: dict[str, object]) -> list[dict[str, str]]:
             {
                 "flag": "Variable income",
                 "severity": "medium",
-                "explanation": f"Income volatility is material with a coefficient of variation of {record['income_cv']:.2f}.",
+                "explanation": (
+                    "Income volatility is material with a coefficient of variation of "
+                    f"{record['income_cv']:.2f}."
+                ),
             }
         )
 
@@ -127,7 +139,9 @@ def risk_flags_for_user(record: dict[str, object]) -> list[dict[str, str]]:
             {
                 "flag": "High discretionary spend",
                 "severity": "medium",
-                "explanation": f"Discretionary spending represents {record['avg_discretionary_ratio']:.1%} of income.",
+                "explanation": (
+                    f"Discretionary spending represents {record['avg_discretionary_ratio']:.1%} of income."
+                ),
             }
         )
 
