@@ -1,0 +1,237 @@
+user_id,flag,severity,explanation
+U0001,Thin cashflow buffer,medium,Free cashflow is only 2.6% of average income.
+U0002,Thin cashflow buffer,medium,Free cashflow is only 1.1% of average income.
+U0003,Thin cashflow buffer,medium,Free cashflow is only 4.9% of average income.
+U0004,Highly variable income,high,"Income coefficient of variation is 0.34, reducing repayment predictability."
+U0005,High debt burden,high,Debt payments represent 25.1% of average monthly income.
+U0005,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0005,Low savings discipline,medium,Average savings rate is 0.3%.
+U0006,Thin cashflow buffer,medium,Free cashflow is only 4.4% of average income.
+U0007,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0008,No major risk flags,low,The synthetic profile does not show a dominant credit readiness weakness.
+U0009,Variable income,medium,Income volatility is material with a coefficient of variation of 0.28.
+U0010,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 23.7%.
+U0010,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0010,Low savings discipline,medium,Average savings rate is 0.4%.
+U0011,Thin cashflow buffer,medium,Free cashflow is only 2.6% of average income.
+U0012,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0013,Thin cashflow buffer,medium,Free cashflow is only 1.0% of average income.
+U0013,High discretionary spend,medium,Discretionary spending represents 32.2% of income.
+U0014,Variable income,medium,Income volatility is material with a coefficient of variation of 0.28.
+U0015,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 24.4%.
+U0015,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0015,Low savings discipline,medium,Average savings rate is 0.3%.
+U0016,Thin cashflow buffer,medium,Free cashflow is only 3.0% of average income.
+U0017,Thin cashflow buffer,medium,Free cashflow is only 0.9% of average income.
+U0018,Thin cashflow buffer,medium,Free cashflow is only 1.1% of average income.
+U0018,High discretionary spend,medium,Discretionary spending represents 32.3% of income.
+U0019,Highly variable income,high,"Income coefficient of variation is 0.33, reducing repayment predictability."
+U0020,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 23.0%.
+U0020,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0020,Low savings discipline,medium,Average savings rate is 0.9%.
+U0021,Thin cashflow buffer,medium,Free cashflow is only 2.9% of average income.
+U0022,Thin cashflow buffer,medium,Free cashflow is only 0.6% of average income.
+U0023,Thin cashflow buffer,medium,Free cashflow is only 1.4% of average income.
+U0024,Variable income,medium,Income volatility is material with a coefficient of variation of 0.28.
+U0025,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 24.8%.
+U0025,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0025,Low savings discipline,medium,Average savings rate is 0.1%.
+U0026,Thin cashflow buffer,medium,Free cashflow is only 3.6% of average income.
+U0027,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0028,Thin cashflow buffer,medium,Free cashflow is only 1.2% of average income.
+U0028,Low savings discipline,medium,Average savings rate is 4.1%.
+U0028,High discretionary spend,medium,Discretionary spending represents 32.4% of income.
+U0029,Highly variable income,high,"Income coefficient of variation is 0.33, reducing repayment predictability."
+U0030,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 23.4%.
+U0030,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0030,Low savings discipline,medium,Average savings rate is 0.7%.
+U0031,Thin cashflow buffer,medium,Free cashflow is only 2.7% of average income.
+U0032,Thin cashflow buffer,medium,Free cashflow is only 0.4% of average income.
+U0033,Thin cashflow buffer,medium,Free cashflow is only 2.6% of average income.
+U0034,No major risk flags,low,The synthetic profile does not show a dominant credit readiness weakness.
+U0035,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 23.9%.
+U0035,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0035,Low savings discipline,medium,Average savings rate is 0.4%.
+U0036,Thin cashflow buffer,medium,Free cashflow is only 2.1% of average income.
+U0037,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0038,Thin cashflow buffer,medium,Free cashflow is only 2.6% of average income.
+U0039,Highly variable income,high,"Income coefficient of variation is 0.33, reducing repayment predictability."
+U0040,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 23.2%.
+U0040,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0040,Low savings discipline,medium,Average savings rate is 1.2%.
+U0041,Thin cashflow buffer,medium,Free cashflow is only 0.5% of average income.
+U0042,Thin cashflow buffer,medium,Free cashflow is only 0.5% of average income.
+U0043,Thin cashflow buffer,medium,Free cashflow is only 1.9% of average income.
+U0044,Highly variable income,high,"Income coefficient of variation is 0.32, reducing repayment predictability."
+U0045,High debt burden,high,Debt payments represent 25.3% of average monthly income.
+U0045,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0045,Low savings discipline,medium,Average savings rate is 0.8%.
+U0046,Thin cashflow buffer,medium,Free cashflow is only 1.5% of average income.
+U0047,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0048,Thin cashflow buffer,medium,Free cashflow is only 1.4% of average income.
+U0049,Variable income,medium,Income volatility is material with a coefficient of variation of 0.22.
+U0050,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 23.1%.
+U0050,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0050,Low savings discipline,medium,Average savings rate is 1.2%.
+U0051,No major risk flags,low,The synthetic profile does not show a dominant credit readiness weakness.
+U0052,Thin cashflow buffer,medium,Free cashflow is only 1.8% of average income.
+U0053,Thin cashflow buffer,medium,Free cashflow is only 1.9% of average income.
+U0053,Low savings discipline,medium,Average savings rate is 4.6%.
+U0054,No major risk flags,low,The synthetic profile does not show a dominant credit readiness weakness.
+U0055,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 24.1%.
+U0055,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0055,Low savings discipline,medium,Average savings rate is 0.0%.
+U0056,Thin cashflow buffer,medium,Free cashflow is only 3.8% of average income.
+U0057,Thin cashflow buffer,medium,Free cashflow is only 0.6% of average income.
+U0058,Thin cashflow buffer,medium,Free cashflow is only 3.3% of average income.
+U0058,High discretionary spend,medium,Discretionary spending represents 32.4% of income.
+U0059,Variable income,medium,Income volatility is material with a coefficient of variation of 0.26.
+U0060,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 24.9%.
+U0060,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0060,Low savings discipline,medium,Average savings rate is 0.8%.
+U0061,Thin cashflow buffer,medium,Free cashflow is only 3.0% of average income.
+U0062,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0063,Thin cashflow buffer,medium,Free cashflow is only 1.8% of average income.
+U0063,High discretionary spend,medium,Discretionary spending represents 32.9% of income.
+U0064,Variable income,medium,Income volatility is material with a coefficient of variation of 0.24.
+U0065,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 24.3%.
+U0065,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0065,Low savings discipline,medium,Average savings rate is 0.4%.
+U0066,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0067,Thin cashflow buffer,medium,Free cashflow is only 1.7% of average income.
+U0068,Thin cashflow buffer,medium,Free cashflow is only 2.4% of average income.
+U0069,Highly variable income,high,"Income coefficient of variation is 0.51, reducing repayment predictability."
+U0070,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 23.2%.
+U0070,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0070,Low savings discipline,medium,Average savings rate is 0.7%.
+U0071,Thin cashflow buffer,medium,Free cashflow is only 2.4% of average income.
+U0072,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0073,Thin cashflow buffer,medium,Free cashflow is only 0.9% of average income.
+U0073,Low savings discipline,medium,Average savings rate is 4.8%.
+U0074,Variable income,medium,Income volatility is material with a coefficient of variation of 0.25.
+U0075,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 24.6%.
+U0075,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0075,Low savings discipline,medium,Average savings rate is 0.6%.
+U0076,Thin cashflow buffer,medium,Free cashflow is only 3.6% of average income.
+U0077,Thin cashflow buffer,medium,Free cashflow is only 1.7% of average income.
+U0078,Thin cashflow buffer,medium,Free cashflow is only 2.7% of average income.
+U0078,High discretionary spend,medium,Discretionary spending represents 32.0% of income.
+U0079,Highly variable income,high,"Income coefficient of variation is 0.35, reducing repayment predictability."
+U0080,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 23.5%.
+U0080,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0080,Low savings discipline,medium,Average savings rate is 0.7%.
+U0081,Thin cashflow buffer,medium,Free cashflow is only 1.9% of average income.
+U0082,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0083,Thin cashflow buffer,medium,Free cashflow is only 2.1% of average income.
+U0083,Low savings discipline,medium,Average savings rate is 4.3%.
+U0083,High discretionary spend,medium,Discretionary spending represents 32.3% of income.
+U0084,Highly variable income,high,"Income coefficient of variation is 0.31, reducing repayment predictability."
+U0085,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 22.7%.
+U0085,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0085,Low savings discipline,medium,Average savings rate is 0.3%.
+U0086,No major risk flags,low,The synthetic profile does not show a dominant credit readiness weakness.
+U0087,Thin cashflow buffer,medium,Free cashflow is only 0.7% of average income.
+U0088,Thin cashflow buffer,medium,Free cashflow is only 0.8% of average income.
+U0088,Low savings discipline,medium,Average savings rate is 4.7%.
+U0088,High discretionary spend,medium,Discretionary spending represents 32.1% of income.
+U0089,Highly variable income,high,"Income coefficient of variation is 0.31, reducing repayment predictability."
+U0090,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 24.8%.
+U0090,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0090,Low savings discipline,medium,Average savings rate is 0.9%.
+U0091,Thin cashflow buffer,medium,Free cashflow is only 2.2% of average income.
+U0092,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0093,Thin cashflow buffer,medium,Free cashflow is only 2.3% of average income.
+U0093,Low savings discipline,medium,Average savings rate is 4.6%.
+U0093,High discretionary spend,medium,Discretionary spending represents 32.6% of income.
+U0094,Highly variable income,high,"Income coefficient of variation is 0.33, reducing repayment predictability."
+U0095,High debt burden,high,Debt payments represent 25.0% of average monthly income.
+U0095,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0095,Low savings discipline,medium,Average savings rate is 0.1%.
+U0096,Thin cashflow buffer,medium,Free cashflow is only 4.1% of average income.
+U0097,Thin cashflow buffer,medium,Free cashflow is only 0.7% of average income.
+U0098,Thin cashflow buffer,medium,Free cashflow is only 0.5% of average income.
+U0098,Low savings discipline,medium,Average savings rate is 4.1%.
+U0098,High discretionary spend,medium,Discretionary spending represents 32.6% of income.
+U0099,Highly variable income,high,"Income coefficient of variation is 0.35, reducing repayment predictability."
+U0100,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 24.5%.
+U0100,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0100,Low savings discipline,medium,Average savings rate is 0.2%.
+U0101,Thin cashflow buffer,medium,Free cashflow is only 3.9% of average income.
+U0102,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0103,Thin cashflow buffer,medium,Free cashflow is only 1.3% of average income.
+U0104,Variable income,medium,Income volatility is material with a coefficient of variation of 0.30.
+U0105,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 23.9%.
+U0105,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0105,Low savings discipline,medium,Average savings rate is 0.8%.
+U0106,Thin cashflow buffer,medium,Free cashflow is only 2.5% of average income.
+U0107,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0108,Thin cashflow buffer,medium,Free cashflow is only 2.2% of average income.
+U0108,High discretionary spend,medium,Discretionary spending represents 33.1% of income.
+U0109,Variable income,medium,Income volatility is material with a coefficient of variation of 0.28.
+U0110,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 24.0%.
+U0110,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0110,Low savings discipline,medium,Average savings rate is 1.7%.
+U0111,Thin cashflow buffer,medium,Free cashflow is only 1.5% of average income.
+U0112,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0113,Thin cashflow buffer,medium,Free cashflow is only 0.2% of average income.
+U0113,Low savings discipline,medium,Average savings rate is 4.5%.
+U0113,High discretionary spend,medium,Discretionary spending represents 33.6% of income.
+U0114,Variable income,medium,Income volatility is material with a coefficient of variation of 0.24.
+U0115,High debt burden,high,Debt payments represent 25.2% of average monthly income.
+U0115,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0115,Low savings discipline,medium,Average savings rate is 0.3%.
+U0116,Thin cashflow buffer,medium,Free cashflow is only 3.1% of average income.
+U0117,Thin cashflow buffer,medium,Free cashflow is only 1.3% of average income.
+U0118,Thin cashflow buffer,medium,Free cashflow is only 3.1% of average income.
+U0118,Low savings discipline,medium,Average savings rate is 5.0%.
+U0119,Variable income,medium,Income volatility is material with a coefficient of variation of 0.26.
+U0120,High debt burden,high,Debt payments represent 25.3% of average monthly income.
+U0120,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0120,Low savings discipline,medium,Average savings rate is 0.2%.
+U0121,Thin cashflow buffer,medium,Free cashflow is only 2.4% of average income.
+U0122,Thin cashflow buffer,medium,Free cashflow is only 0.8% of average income.
+U0123,Thin cashflow buffer,medium,Free cashflow is only 2.1% of average income.
+U0123,Low savings discipline,medium,Average savings rate is 4.1%.
+U0124,Highly variable income,high,"Income coefficient of variation is 0.33, reducing repayment predictability."
+U0125,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 24.2%.
+U0125,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0125,Low savings discipline,medium,Average savings rate is 0.3%.
+U0126,Thin cashflow buffer,medium,Free cashflow is only 1.3% of average income.
+U0127,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0128,Thin cashflow buffer,medium,Free cashflow is only 1.4% of average income.
+U0129,Highly variable income,high,"Income coefficient of variation is 0.41, reducing repayment predictability."
+U0130,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 22.1%.
+U0130,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0130,Low savings discipline,medium,Average savings rate is 1.2%.
+U0131,Thin cashflow buffer,medium,Free cashflow is only 2.1% of average income.
+U0132,Thin cashflow buffer,medium,Free cashflow is only 0.4% of average income.
+U0133,Thin cashflow buffer,medium,Free cashflow is only 4.2% of average income.
+U0134,Variable income,medium,Income volatility is material with a coefficient of variation of 0.25.
+U0135,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 22.6%.
+U0135,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0135,Low savings discipline,medium,Average savings rate is 0.8%.
+U0136,Thin cashflow buffer,medium,Free cashflow is only 1.5% of average income.
+U0137,Thin cashflow buffer,medium,Free cashflow is only 0.1% of average income.
+U0138,Thin cashflow buffer,medium,Free cashflow is only 3.2% of average income.
+U0139,Variable income,medium,Income volatility is material with a coefficient of variation of 0.24.
+U0140,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 24.4%.
+U0140,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0140,Low savings discipline,medium,Average savings rate is 0.4%.
+U0141,Thin cashflow buffer,medium,Free cashflow is only 3.2% of average income.
+U0142,Thin cashflow buffer,medium,Free cashflow is only 2.4% of average income.
+U0143,Thin cashflow buffer,medium,Free cashflow is only 0.4% of average income.
+U0143,Low savings discipline,medium,Average savings rate is 4.8%.
+U0143,High discretionary spend,medium,Discretionary spending represents 33.1% of income.
+U0144,No major risk flags,low,The synthetic profile does not show a dominant credit readiness weakness.
+U0145,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 22.2%.
+U0145,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0145,Low savings discipline,medium,Average savings rate is 0.7%.
+U0146,Thin cashflow buffer,medium,Free cashflow is only 2.0% of average income.
+U0147,Thin cashflow buffer,medium,Free cashflow is only 2.5% of average income.
+U0148,Thin cashflow buffer,medium,Free cashflow is only 0.7% of average income.
+U0148,Low savings discipline,medium,Average savings rate is 4.0%.
+U0148,High discretionary spend,medium,Discretionary spending represents 33.2% of income.
+U0149,Highly variable income,high,"Income coefficient of variation is 0.38, reducing repayment predictability."
+U0150,Elevated debt burden,medium,Debt payments are above a conservative affordability threshold at 24.7%.
+U0150,Negative free cashflow,high,Average monthly expenses and savings transfers exceed income.
+U0150,Low savings discipline,medium,Average savings rate is 0.4%.

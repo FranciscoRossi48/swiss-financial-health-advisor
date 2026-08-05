@@ -1,8 +1,8 @@
 # Swiss Financial Health Advisor
 
-Prescriptive analytics prototype for personal financial health in a Swiss neobank context.
+Prescriptive analytics prototype for personal financial health and credit readiness in a Swiss neobank context.
 
-This project turns a final degree thesis concept into a working data science product prototype: synthetic Open Banking-style transactions are transformed into customer segments, an explainable financial health score, and personalized recommendations.
+This project turns a final degree thesis concept into a working data science product prototype: synthetic Open Banking-style transactions are transformed into customer segments, an explainable financial health score, a credit readiness signal, risk flags, and personalized recommendations.
 
 ![Dashboard screenshot](docs/assets/dashboard-overview.png)
 
@@ -20,8 +20,9 @@ The context is inspired by the Swiss fintech ecosystem and by a final degree pro
 2. Engineers monthly behavioral features per user.
 3. Builds an explainable Financial Health Score from 0 to 100.
 4. Segments users with K-Means clustering.
-5. Produces prescriptive recommendations based on each user's weakest dimension.
-6. Presents the output in a Streamlit dashboard.
+5. Adds a Credit Readiness Score for non-decisional affordability guidance.
+6. Produces risk flags and prescriptive recommendations based on each user's weakest dimensions.
+7. Presents the output in a Streamlit dashboard.
 
 ## Analytical Validation
 
@@ -41,6 +42,7 @@ The current generated demo includes:
 | Synthetic users | 150 |
 | Behavioral segments | 5 |
 | K-Means silhouette score | 0.632 |
+| Credit readiness risk flags | 236 |
 
 ## Financial Health Score
 
@@ -88,6 +90,22 @@ Explanation: Average savings rate is 4.7%, below a sustainable long-term target.
 
 This is rule-based by design. In a regulated financial context, a transparent baseline is often a better first version than an opaque model that is difficult to audit.
 
+## Credit Readiness Layer
+
+The credit readiness layer is not a credit approval model. It is a decision-support signal that estimates whether a user appears financially prepared to assume additional credit exposure.
+
+It combines:
+
+| Dimension | Interpretation |
+| --- | --- |
+| Income reliability | Stability of recurring inflows. |
+| Debt capacity | Current debt burden relative to income. |
+| Cashflow resilience | Free monthly cashflow after expenses and savings transfers. |
+| Savings discipline | Regular ability to retain income. |
+| Spending control | Share of income allocated to discretionary categories. |
+
+The system also generates explainable risk flags such as high debt burden, variable income, thin cashflow buffer, low savings discipline, and high discretionary spend.
+
 ## Architecture
 
 ```text
@@ -97,6 +115,8 @@ Synthetic transactions
 Monthly feature engineering
         |
         +--> Financial Health Score
+        |
+        +--> Credit Readiness Score + Risk Flags
         |
         +--> K-Means segmentation
         |
@@ -115,19 +135,20 @@ Streamlit dashboard
 │   └── streamlit_app.py
 ├── data/
 │   ├── recommendations.csv
+│   ├── risk_flags.csv
 │   ├── scored_users.csv
 │   ├── segment_centroids.csv
 │   ├── synthetic_transactions.csv
 │   └── user_monthly_features.csv
 ├── docs/
-│   ├── assets/
-│   │   └── dashboard-overview.png
-│   └── linkedin-post.md
+│   └── assets/
+│       └── dashboard-overview.png
 ├── scripts/
 │   └── build_demo_data.py
 ├── src/
 │   └── swiss_financial_health/
 │       ├── clustering.py
+│       ├── credit_readiness.py
 │       ├── data_generation.py
 │       ├── features.py
 │       ├── recommendations.py
@@ -199,6 +220,8 @@ Important design choices:
 - Synthetic data only.
 - No credit approval, pricing, or eligibility decisions.
 - Explainable score components.
+- Non-decisional credit readiness signal.
+- Transparent risk flags.
 - Human-readable recommendation rules.
 - Clear separation between analytics signals and financial advice.
 
@@ -208,6 +231,7 @@ Important design choices:
 - Add SHAP-style explanations if predictive models are introduced.
 - Add a FastAPI scoring endpoint.
 - Add multi-source Open Banking simulation.
+- Add a loan affordability simulator.
 - Add Docker support for reproducible deployment.
 
 ## Disclaimer
