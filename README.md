@@ -1,8 +1,11 @@
 # Swiss Financial Health Advisor
 
 [![CI](https://github.com/FranciscoRossi48/swiss-financial-health-advisor/actions/workflows/ci.yml/badge.svg)](https://github.com/FranciscoRossi48/swiss-financial-health-advisor/actions/workflows/ci.yml)
+[![Live Demo](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://swiss-financial-health-advisor.streamlit.app)
 
 Prescriptive analytics prototype for personal financial health and credit readiness in a Swiss neobank context.
+
+🔗 **[Try the live demo](https://swiss-financial-health-advisor.streamlit.app)** — no cloning required.
 
 This project turns a final degree thesis concept into a working data science product prototype: synthetic Open Banking-style transactions are transformed into customer segments, an explainable financial health score, a credit readiness signal, risk flags, and personalized recommendations.
 
