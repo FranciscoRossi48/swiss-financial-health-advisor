@@ -1,0 +1,13 @@
+# Copy the relevant block into ~/.dbt/profiles.yml (do not commit real profiles.yml files —
+# they can contain credentials for other unrelated projects). This project uses OAuth via
+# `gcloud auth application-default login`, so no key file or secret lives in this profile.
+swiss_financial_health_elt:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth
+      project: swiss-fin-health-tfg
+      dataset: swiss_financial_health
+      location: us-central1
+      threads: 4

@@ -146,7 +146,9 @@ Streamlit dashboard
 
 ```text
 .
+├── Dockerfile
 ├── app/
+│   ├── api.py
 │   └── streamlit_app.py
 ├── data/
 │   ├── recommendations.csv
@@ -158,7 +160,17 @@ Streamlit dashboard
 ├── docs/
 │   ├── assets/
 │   │   └── dashboard-overview.png
+│   ├── elt-architecture.md
 │   └── scoring-methodology.md
+├── elt/
+│   ├── README.md
+│   ├── dbt_project.yml
+│   ├── macros/
+│   ├── models/
+│   │   ├── staging/
+│   │   ├── intermediate/
+│   │   └── marts/
+│   └── tests/
 ├── scripts/
 │   └── build_demo_data.py
 ├── src/
@@ -265,6 +277,34 @@ curl -X POST http://localhost:8000/users/U0001/loan-affordability \
 | `GET /users/{user_id}/recommendation` | Priority recommendation for one user. |
 | `POST /users/{user_id}/loan-affordability` | Simulate a hypothetical loan against one user's profile. |
 
+## Docker
+
+The dashboard also runs as a self-contained container: the image installs dependencies and
+regenerates the synthetic demo data at build time, so it has no dependency on locally committed
+CSVs.
+
+```bash
+docker build -t swiss-financial-health-advisor .
+docker run -p 8501:8501 swiss-financial-health-advisor
+```
+
+Then open `http://localhost:8501`. To run the API instead, override the container command:
+
+```bash
+docker run -p 8000:8000 swiss-financial-health-advisor \
+  uvicorn app.api:app --host 0.0.0.0 --port 8000
+```
+
+## Cloud ELT Architecture (GCP + dbt)
+
+Alongside the local pandas pipeline, [elt/](elt/) implements the same logic as a cloud ELT
+architecture: Cloud Storage → BigQuery → dbt (raw → staging → intermediate → marts), with
+segmentation via a native BigQuery ML KMeans model. It was validated row-by-row against the
+local pipeline's output. See [docs/elt-architecture.md](docs/elt-architecture.md) for the layer
+diagram, the model-to-module mapping, and the validation results, and [elt/README.md](elt/README.md)
+for setup and run instructions. This is an additional, optional implementation — the public
+dashboard and API do not depend on it.
+
 ## Regulated AI Considerations
 
 This project is deliberately framed as a decision-support prototype, not as an automated financial decision system.
@@ -284,7 +324,6 @@ Important design choices:
 - Add cohort-level trend analysis.
 - Add SHAP-style explanations if predictive models are introduced.
 - Add multi-source Open Banking simulation.
-- Add Docker support for reproducible deployment.
 
 ## Disclaimer
 

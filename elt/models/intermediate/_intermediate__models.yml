@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: int_monthly_features
+    description: >
+      Per (user, month) behavioral features. SQL equivalent of
+      build_monthly_features() in src/swiss_financial_health/features.py.
+
+  - name: int_user_summary
+    description: >
+      Per-user averages of the monthly features. SQL equivalent of
+      build_user_summary() in src/swiss_financial_health/features.py.
+
+  - name: int_user_segments
+    description: >
+      Per-user cluster assignment from the BigQuery ML KMeans model
+      (segment_model, trained by the create_segment_model() macro as a
+      pre_hook on this model). SQL/BQML equivalent of the clustering step in
+      src/swiss_financial_health/clustering.py.

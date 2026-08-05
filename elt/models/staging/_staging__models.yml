@@ -1,0 +1,34 @@
+version: 2
+
+models:
+  - name: stg_transactions
+    description: >
+      Cleaned, explicitly typed transactions — one row per transaction event. Mirrors
+      the shape enforced by swiss_financial_health.validation.validate_transactions
+      in the Python pipeline, so the same invariants hold whether the data flows
+      through pandas locally or through this BigQuery/dbt path.
+    columns:
+      - name: user_id
+        description: Synthetic user identifier.
+        tests:
+          - not_null
+      - name: transaction_date
+        description: Date the transaction occurred.
+        tests:
+          - not_null
+      - name: category
+        description: Transaction category (e.g. salary, rent, groceries).
+        tests:
+          - not_null
+      - name: transaction_type
+        description: One of income, expense, savings.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["income", "expense", "savings"]
+      - name: amount_chf
+        description: Transaction amount in Swiss francs. Always non-negative (see the
+          assert_transaction_amounts_non_negative singular test).
+        tests:
+          - not_null

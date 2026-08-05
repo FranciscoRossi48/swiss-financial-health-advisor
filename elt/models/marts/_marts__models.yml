@@ -1,0 +1,59 @@
+version: 2
+
+models:
+  - name: fct_financial_health
+    description: >
+      One row per user: the 0-100 Financial Health Score and its four
+      component scores. SQL equivalent of compute_financial_health_score()
+      in src/swiss_financial_health/scoring.py. Threshold rationale:
+      docs/scoring-methodology.md in the repo root.
+    columns:
+      - name: user_id
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_credit_readiness
+    description: >
+      One row per user: the 0-100 Credit Readiness Score and its five
+      component scores. SQL equivalent of compute_credit_readiness() in
+      src/swiss_financial_health/credit_readiness.py.
+    columns:
+      - name: user_id
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_risk_flags
+    description: >
+      Zero or more explainable risk flag rows per user (or one "No major
+      risk flags" row if none apply). SQL equivalent of build_risk_flags()
+      in src/swiss_financial_health/credit_readiness.py.
+
+  - name: fct_recommendations
+    description: >
+      One prescriptive recommendation per user, targeting their weakest
+      Financial Health dimension. SQL equivalent of generate_recommendations()
+      in src/swiss_financial_health/recommendations.py.
+    columns:
+      - name: user_id
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_segment_centroids
+    description: >
+      One row per behavioral segment (5, from the BQML KMeans model), with
+      each centroid's average features and its business-rule label. SQL
+      equivalent of the centroid + label_segment() step in
+      src/swiss_financial_health/clustering.py.
+
+  - name: fct_user_segments
+    description: >
+      One row per user: which of the 5 behavioral segments they belong to,
+      and that segment's human-readable label.
+    columns:
+      - name: user_id
+        tests:
+          - unique
+          - not_null
