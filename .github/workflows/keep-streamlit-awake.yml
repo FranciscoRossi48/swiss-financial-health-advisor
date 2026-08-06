@@ -1,0 +1,40 @@
+name: Keep Streamlit app awake
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Playwright
+        run: |
+          pip install playwright
+          playwright install --with-deps chromium
+
+      - name: Visit the dashboard with a real browser
+        run: |
+          python - <<'PY'
+          from playwright.sync_api import sync_playwright
+
+          URL = "https://swiss-financial-health-advisor.streamlit.app/"
+
+          with sync_playwright() as p:
+              browser = p.chromium.launch()
+              page = browser.new_page()
+              # curl-style requests don't work here: Streamlit Community Cloud's
+              # session bootstrap (auth redirect + cookies) needs a real browser
+              # to resolve, so a plain HTTP ping never actually reaches the app.
+              page.goto(URL, wait_until="networkidle", timeout=60000)
+              title = page.title()
+              print(f"Loaded: {title}")
+              assert "Swiss Financial Health Advisor" in title, f"Unexpected page title: {title}"
+              browser.close()
+          PY
