@@ -9,7 +9,7 @@ Banking-app prototype for personal financial health, credit readiness and prescr
 
 This project turns a final degree thesis concept into a working fintech product prototype: synthetic Open Banking-style transactions are transformed into customer-facing account movements, customer segments, an explainable financial health score, a credit readiness signal, risk flags, and personalized recommendations.
 
-![Dashboard screenshot](docs/assets/dashboard-overview.png)
+![Pulse banking app](docs/assets/pulse-app.png)
 
 ## Why This Exists
 
@@ -29,7 +29,7 @@ The context is inspired by the Swiss fintech ecosystem and by a final degree pro
 6. Adds a Credit Readiness Score for non-decisional affordability guidance.
 7. Produces risk flags and prescriptive recommendations based on each user's weakest dimensions.
 8. Simulates whether a hypothetical new loan fits a user's current financial profile.
-9. Presents the output in a Streamlit banking-app prototype inspired by neon Switzerland AG.
+9. Presents the output to the customer in **Pulse**, a mobile-first banking-app prototype (React + FastAPI) for a fictional Swiss fintech, plus an analyst-facing Streamlit dashboard.
 
 ## Analytical Validation
 
@@ -140,7 +140,9 @@ Monthly feature engineering
 Prescriptive recommendations
         |
         v
-Streamlit dashboard
+FastAPI (app/api.py) ---------> Pulse banking app (web/, React)
+        |
+        +--> Streamlit analyst dashboard
 ```
 
 ## Project Structure
@@ -160,7 +162,8 @@ Streamlit dashboard
 │   └── user_monthly_features.csv
 ├── docs/
 │   ├── assets/
-│   │   └── dashboard-overview.png
+│   │   ├── dashboard-overview.png
+│   │   └── pulse-app.png
 │   ├── elt-architecture.md
 │   └── scoring-methodology.md
 ├── elt/
@@ -181,19 +184,26 @@ Streamlit dashboard
 │       ├── credit_readiness.py
 │       ├── data_generation.py
 │       ├── features.py
+│       ├── presentation.py
 │       ├── recommendations.py
 │       ├── scoring.py
 │       └── validation.py
-└── tests/
-    ├── test_affordability.py
-    ├── test_clustering.py
-    ├── test_credit_readiness.py
-    ├── test_data_generation.py
-    ├── test_features.py
-    ├── test_pipeline.py
-    ├── test_recommendations.py
-    ├── test_scoring.py
-    └── test_validation.py
+├── tests/
+│   ├── test_affordability.py
+│   ├── test_api.py
+│   ├── test_clustering.py
+│   ├── test_credit_readiness.py
+│   ├── test_data_generation.py
+│   ├── test_features.py
+│   ├── test_pipeline.py
+│   ├── test_recommendations.py
+│   ├── test_scoring.py
+│   └── test_validation.py
+└── web/                      # Pulse banking app (React + Vite + Tailwind)
+    └── src/
+        ├── api.ts
+        ├── components/
+        └── screens/          # Home, Activity, Health, Coach
 ```
 
 ## How To Run Locally
@@ -276,7 +286,49 @@ curl -X POST http://localhost:8000/users/U0001/loan-affordability \
 | `GET /users/{user_id}` | Financial health and credit readiness scores for one user. |
 | `GET /users/{user_id}/risk-flags` | Credit readiness risk flags for one user. |
 | `GET /users/{user_id}/recommendation` | Priority recommendation for one user. |
+| `GET /users/{user_id}/transactions` | Signed account movements, newest first. Filters: `type`, `month` (YYYY-MM), `limit`, `offset`. |
+| `GET /users/{user_id}/overview` | Balance, latest-month income/spending/savings and spending by category. |
+| `GET /users/{user_id}/monthly` | Monthly income, expense, savings and net cashflow. |
+| `GET /users/{user_id}/health` | Score breakdowns with weights, plus the user's segment compared to its centroid. |
+| `GET /demo-users` | One representative customer per segment, for the app's persona switcher. |
 | `POST /users/{user_id}/loan-affordability` | Simulate a hypothetical loan against one user's profile. |
+
+The API allows any origin by default because it only serves synthetic data. Set
+`PULSE_ALLOWED_ORIGINS` (comma-separated) to restrict it to the deployed frontend.
+
+## Pulse Banking App
+
+`web/` contains **Pulse**, a mobile-first prototype of how a customer would experience this
+analytics layer inside a banking app. Pulse is a fictional brand created for this project.
+
+- **Home**: balance, this month's money in and out, health score, the coach's top suggestion and recent activity.
+- **Activity**: month-by-month movements with income / spending / savings filters.
+- **Health**: the Financial Health Index with its weighted dimensions, the customer's money profile
+  (K-Means segment) compared to similar customers, credit readiness and monthly net cashflow.
+- **Coach**: the prescriptive recommendation, risk flags and the loan affordability simulator.
+
+A persona switcher (avatar, top right) loads one synthetic customer per segment. On desktop the app
+renders inside a phone frame next to a short project introduction.
+
+Run it with the API in a second terminal (requires Node 20+):
+
+```bash
+uvicorn app.api:app --port 8000
+```
+
+```bash
+cd web
+npm install
+npm run dev
+```
+
+Then open `http://localhost:5173`. In development Vite proxies `/api` to `localhost:8000`. For a
+production build, point the app at the deployed API with `VITE_API_URL=https://your-api npm run build`.
+
+The Streamlit dashboard remains as an analyst-facing view of the same data, including the segment
+scatter and centroids:
+
+![Pulse analyst view](docs/assets/dashboard-overview.png)
 
 ## Docker
 

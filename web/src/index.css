@@ -1,0 +1,77 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink: #0c1a17;
+  --color-ink-soft: #1a2c28;
+  --color-mint: #1fd99a;
+  --color-mint-deep: #0e9f6e;
+  --color-mint-soft: #dcf7eb;
+  --color-canvas: #f3f6f4;
+  --color-muted: #66756f;
+  --color-line: #e3e9e6;
+  --color-danger: #e5484d;
+  --color-danger-soft: #fdecec;
+  --color-warn: #d98a13;
+  --color-warn-soft: #fdf3e2;
+  --color-info: #3a7bd5;
+  --color-info-soft: #e7f0fc;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise {
+  animation: rise 0.35s ease-out both;
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+.sheet-in {
+  animation: sheet-in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+input[type='range'] {
+  accent-color: var(--color-ink);
+}

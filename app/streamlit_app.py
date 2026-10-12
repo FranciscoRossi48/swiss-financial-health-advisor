@@ -12,46 +12,17 @@ sys.path.insert(0, str(ROOT / "src"))
 DATA = ROOT / "data"
 
 from swiss_financial_health.affordability import simulate_loan_affordability
+from swiss_financial_health.presentation import CATEGORY_LABELS, MERCHANTS
 
 
-NEON_GREEN = "#12E6A8"
+PULSE_MINT = "#1FD99A"
 INK = "#111827"
 MUTED = "#6B7280"
 OFF_WHITE = "#F3FBF7"
 LINE = "#E5E7EB"
 
-CATEGORY_LABELS = {
-    "salary": "Salary",
-    "freelance": "Freelance",
-    "rent": "Rent",
-    "insurance": "Insurance",
-    "groceries": "Groceries",
-    "transport": "Transport",
-    "restaurants": "Restaurants",
-    "shopping": "Shopping",
-    "travel": "Travel",
-    "subscriptions": "Subscriptions",
-    "debt_payment": "Debt payment",
-    "savings_transfer": "Savings transfer",
-}
 
-MERCHANTS = {
-    "salary": "Employer payroll",
-    "freelance": "Client transfer",
-    "rent": "Zurich apartment",
-    "insurance": "Swiss insurance",
-    "groceries": "Migros",
-    "transport": "SBB",
-    "restaurants": "Local dining",
-    "shopping": "Retail purchase",
-    "travel": "Travel booking",
-    "subscriptions": "Digital subscription",
-    "debt_payment": "Loan repayment",
-    "savings_transfer": "Savings pocket",
-}
-
-
-st.set_page_config(page_title="neon Financial Coach", page_icon="CHF", layout="wide")
+st.set_page_config(page_title="Pulse Financial Coach", page_icon="CHF", layout="wide")
 
 
 @st.cache_data
@@ -73,11 +44,11 @@ def prepare_user_transactions(transactions: pd.DataFrame, user_id: str) -> pd.Da
     user_tx["signed_amount"] = user_tx["amount_chf"]
     user_tx.loc[user_tx["transaction_type"].isin(["expense", "savings"]), "signed_amount"] *= -1
     user_tx["display_amount"] = user_tx["signed_amount"].map(lambda value: f"CHF {value:,.2f}")
-    user_tx["merchant"] = user_tx["category"].map(MERCHANTS).fillna(
-        user_tx["category"].str.replace("_", " ").str.title()
+    user_tx["merchant"] = (
+        user_tx["category"].map(MERCHANTS).fillna(user_tx["category"].str.replace("_", " ").str.title())
     )
-    user_tx["category_label"] = user_tx["category"].map(CATEGORY_LABELS).fillna(
-        user_tx["category"].str.replace("_", " ").str.title()
+    user_tx["category_label"] = (
+        user_tx["category"].map(CATEGORY_LABELS).fillna(user_tx["category"].str.replace("_", " ").str.title())
     )
     return user_tx.sort_values("date", ascending=False).reset_index(drop=True)
 
@@ -93,7 +64,7 @@ def score_bar(data: pd.DataFrame, title: str):
         y="score",
         range_y=[0, 100],
         color="score",
-        color_continuous_scale=["#DC2626", "#D97706", "#2563EB", NEON_GREEN],
+        color_continuous_scale=["#DC2626", "#D97706", "#2563EB", PULSE_MINT],
         title=title,
     )
     fig.update_layout(coloraxis_showscale=False, xaxis_title="", yaxis_title="Score")
@@ -105,7 +76,7 @@ def inject_styles() -> None:
         f"""
         <style>
         :root {{
-            --neon-green: {NEON_GREEN};
+            --pulse-mint: {PULSE_MINT};
             --ink: {INK};
             --muted: {MUTED};
             --off-white: {OFF_WHITE};
@@ -127,7 +98,7 @@ def inject_styles() -> None:
         div[data-testid="stMetricLabel"] {{
             color: var(--muted);
         }}
-        .neon-header {{
+        .pulse-header {{
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -138,17 +109,17 @@ def inject_styles() -> None:
             background: #ffffff;
             margin-bottom: 18px;
         }}
-        .neon-logo {{
+        .pulse-logo {{
             font-size: 34px;
             line-height: 1;
             font-weight: 800;
             letter-spacing: 0;
             color: var(--ink);
         }}
-        .neon-logo span {{
-            color: var(--neon-green);
+        .pulse-logo span {{
+            color: var(--pulse-mint);
         }}
-        .neon-subtitle {{
+        .pulse-subtitle {{
             margin-top: 6px;
             color: var(--muted);
             font-size: 14px;
@@ -183,14 +154,14 @@ transactions, users, monthly, recommendations, risk_flags, centroids = load_data
 
 st.markdown(
     """
-    <div class="neon-header">
+    <div class="pulse-header">
       <div>
-        <div class="neon-logo">neon<span>.</span> coach</div>
-        <div class="neon-subtitle">
+        <div class="pulse-logo">pulse<span>.</span> analyst view</div>
+        <div class="pulse-subtitle">
           A banking-app prototype for transactions, financial health and prescriptive guidance.
         </div>
       </div>
-      <div class="pill">Prototype inspired by neon Switzerland AG</div>
+      <div class="pill">Fictional brand · synthetic data</div>
     </div>
     """,
     unsafe_allow_html=True,
@@ -243,7 +214,7 @@ with home_tab:
                 ],
                 columns=["Metric", "Value"],
             ),
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
         )
         st.markdown(f"**Recommended next step**  \n{rec['recommendation']}")
@@ -256,10 +227,10 @@ with home_tab:
             y=["income", "expense", "savings"],
             title="Monthly flows",
             labels={"value": "CHF", "variable": "Flow"},
-            color_discrete_map={"income": NEON_GREEN, "expense": "#111827", "savings": "#2563EB"},
+            color_discrete_map={"income": PULSE_MINT, "expense": "#111827", "savings": "#2563EB"},
         )
         trend.update_layout(legend_title_text="")
-        st.plotly_chart(trend, use_container_width=True)
+        st.plotly_chart(trend, width="stretch")
 
 with transactions_tab:
     st.subheader("Movements")
@@ -282,7 +253,7 @@ with transactions_tab:
 
     st.dataframe(
         filtered_tx[["date", "merchant", "category_label", "movement", "display_amount"]],
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
         column_config={
             "date": "Date",
@@ -305,9 +276,9 @@ with transactions_tab:
         y="amount_chf",
         title="Spending and savings transfers by category",
         labels={"category_label": "", "amount_chf": "CHF"},
-        color_discrete_sequence=[NEON_GREEN],
+        color_discrete_sequence=[PULSE_MINT],
     )
-    st.plotly_chart(spend_fig, use_container_width=True)
+    st.plotly_chart(spend_fig, width="stretch")
 
 with health_tab:
     st.subheader("Health index")
@@ -316,7 +287,7 @@ with health_tab:
         ["liquidity_score", "income_stability_score", "savings_score", "debt_score"],
         ["Liquidity", "Income stability", "Savings", "Debt"],
     )
-    st.plotly_chart(score_bar(health_scores, "Health index breakdown"), use_container_width=True)
+    st.plotly_chart(score_bar(health_scores, "Health index breakdown"), width="stretch")
 
     st.subheader("Credit readiness")
     credit_scores = score_breakdown(
@@ -336,7 +307,7 @@ with health_tab:
             "Spending control",
         ],
     )
-    st.plotly_chart(score_bar(credit_scores, "Credit readiness breakdown"), use_container_width=True)
+    st.plotly_chart(score_bar(credit_scores, "Credit readiness breakdown"), width="stretch")
 
 with coach_tab:
     st.subheader("Personalized guidance")
@@ -347,7 +318,7 @@ with coach_tab:
     st.subheader("Risk flags")
     st.dataframe(
         user_flags[["severity", "flag", "explanation"]],
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
     )
     st.markdown(
@@ -407,7 +378,7 @@ with segments_tab:
                 "segment_label": "Segment",
             },
         )
-        st.plotly_chart(scatter, use_container_width=True)
+        st.plotly_chart(scatter, width="stretch")
 
     with col2:
         st.subheader("Segment centroids")
@@ -423,11 +394,11 @@ with segments_tab:
                     "financial_health_score",
                 ]
             ],
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
         )
 
 st.caption(
-    "Educational prototype with synthetic data. Visual style is inspired by neon Switzerland AG, "
-    "but this project is independent and not affiliated with neon."
+    "Educational prototype with synthetic data. Pulse is a fictional brand created for this project "
+    "and is not affiliated with any bank or fintech."
 )
