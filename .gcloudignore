@@ -1,0 +1,17 @@
+# Files excluded from `gcloud builds submit` uploads (the Pulse image build).
+.git/
+.github/
+.venv/
+.claude/
+**/__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+web/node_modules/
+web/dist/
+data/
+notebooks/
+docs/
+elt/
+tests/
+*.egg-info/

@@ -1,0 +1,10 @@
+# Builds the Pulse image (Dockerfile.pulse) and pushes it to Artifact Registry.
+# Usage: gcloud builds submit --config cloudbuild.pulse.yaml --region us-central1 \
+#          --gcs-source-staging-dir gs://swiss-fin-health-tfg-build/source
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args: ["build", "-f", "Dockerfile.pulse", "-t", "us-central1-docker.pkg.dev/$PROJECT_ID/pulse/pulse:latest", "."]
+images:
+  - us-central1-docker.pkg.dev/$PROJECT_ID/pulse/pulse:latest
+options:
+  logging: CLOUD_LOGGING_ONLY

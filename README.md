@@ -5,7 +5,7 @@
 
 Banking-app prototype for personal financial health, credit readiness and prescriptive guidance in a Swiss neobank context.
 
-🔗 **[Try the live demo](https://swiss-financial-health-advisor.streamlit.app)** — no cloning required.
+🔗 **[Open the Pulse banking app](https://pulse-255451904172.us-central1.run.app)** (customer view) · **[Streamlit analyst view](https://swiss-financial-health-advisor.streamlit.app)** — no cloning required.
 
 This project turns a final degree thesis concept into a working fintech product prototype: synthetic Open Banking-style transactions are transformed into customer-facing account movements, customer segments, an explainable financial health score, a credit readiness signal, risk flags, and personalized recommendations.
 
@@ -151,9 +151,12 @@ FastAPI (app/api.py) ---------> Pulse banking app (web/, React)
 
 ```text
 .
-├── Dockerfile
+├── Dockerfile                # Streamlit dashboard image
+├── Dockerfile.pulse          # Pulse app image (Cloud Run)
+├── cloudbuild.pulse.yaml
 ├── app/
 │   ├── api.py
+│   ├── server.py             # production entry point: API at /api + built web app
 │   └── streamlit_app.py
 ├── data/
 │   ├── recommendations.csv
@@ -331,6 +334,24 @@ The Streamlit dashboard remains as an analyst-facing view of the same data, incl
 scatter and centroids:
 
 ![Pulse analyst view](docs/assets/dashboard-overview.png)
+
+## Deploying Pulse (Cloud Run)
+
+The live Pulse app runs as a single Cloud Run service: [`Dockerfile.pulse`](Dockerfile.pulse) builds
+the React app and serves it together with the API from [`app/server.py`](app/server.py) (web app at
+`/`, API at `/api`), so there is one URL and no CORS setup. The service is configured to stay inside
+GCP's free tier: `us-central1`, scale to zero (`--min-instances 0`), at most two instances, and an
+Artifact Registry cleanup policy that keeps only the latest image. The first request after a quiet
+period takes a few seconds while an instance starts.
+
+To redeploy after a change:
+
+```bash
+gcloud builds submit --config cloudbuild.pulse.yaml --region us-central1 \
+  --gcs-source-staging-dir gs://swiss-fin-health-tfg-build/source
+gcloud run deploy pulse --region us-central1 \
+  --image us-central1-docker.pkg.dev/swiss-fin-health-tfg/pulse/pulse:latest
+```
 
 ## Docker
 
