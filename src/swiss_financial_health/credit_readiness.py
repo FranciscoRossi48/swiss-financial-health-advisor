@@ -16,7 +16,7 @@ CREDIT_READINESS_WEIGHTS = {
 
 def compute_credit_readiness(scored_users: pd.DataFrame) -> pd.DataFrame:
     df = scored_users.copy()
-    free_cashflow_ratio = df["avg_net_cashflow"] / df["avg_income"].replace(0, np.nan)
+    free_cashflow_ratio = df["avg_free_cashflow"] / df["avg_income"].replace(0, np.nan)
 
     df["income_reliability_score"] = scale_lower_is_better(df["income_cv"], good=0.08, poor=0.30)
     df["debt_capacity_score"] = scale_lower_is_better(df["avg_debt_to_income"], good=0.08, poor=0.30)
@@ -107,13 +107,13 @@ def risk_flags_for_user(record: dict[str, object]) -> list[dict[str, str]]:
             }
         )
 
-    free_cashflow_ratio = record["avg_net_cashflow"] / record["avg_income"] if record["avg_income"] else 0
+    free_cashflow_ratio = record["avg_free_cashflow"] / record["avg_income"] if record["avg_income"] else 0
     if free_cashflow_ratio < 0:
         flags.append(
             {
                 "flag": "Negative free cashflow",
                 "severity": "high",
-                "explanation": "Average monthly expenses and savings transfers exceed income.",
+                "explanation": "Average monthly spending exceeds income.",
             }
         )
     elif free_cashflow_ratio < 0.05:

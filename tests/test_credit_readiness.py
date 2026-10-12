@@ -11,7 +11,7 @@ def _record(**overrides):
     record = {
         "user_id": "U1",
         "avg_income": 5000.0,
-        "avg_net_cashflow": 500.0,
+        "avg_free_cashflow": 500.0,
         "income_cv": 0.10,
         "avg_debt_to_income": 0.05,
         "avg_savings_rate": 0.15,
@@ -36,12 +36,12 @@ def test_elevated_debt_burden_flag_between_thresholds():
 
 
 def test_negative_free_cashflow_flag_when_expenses_exceed_income():
-    flags = risk_flags_for_user(_record(avg_net_cashflow=-100.0))
+    flags = risk_flags_for_user(_record(avg_free_cashflow=-100.0))
     assert any(f["flag"] == "Negative free cashflow" for f in flags)
 
 
 def test_zero_income_does_not_raise_division_error():
-    flags = risk_flags_for_user(_record(avg_income=0.0, avg_net_cashflow=0.0))
+    flags = risk_flags_for_user(_record(avg_income=0.0, avg_free_cashflow=0.0))
     assert any(f["flag"] == "Thin cashflow buffer" for f in flags)
 
 

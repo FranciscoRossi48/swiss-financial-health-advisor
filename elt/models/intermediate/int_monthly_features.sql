@@ -40,6 +40,8 @@ select
     savings,
     debt_payments,
     discretionary_spend,
+    -- savings transfers are reserves the customer keeps, so free cashflow is measured before them
+    income - expense as free_cashflow,
     income - expense - savings as net_cashflow,
     greatest(coalesce(safe_divide(savings + greatest(income - expense - savings, 0), income), 0), 0)
         as savings_rate,

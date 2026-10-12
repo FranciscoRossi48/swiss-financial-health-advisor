@@ -16,11 +16,14 @@ weakest as (
 labeled as (
     select
         user_id,
-        avg_net_cashflow,
+        reserve_months,
         income_cv,
         avg_savings_rate,
         avg_debt_to_income,
         case
+            -- every dimension already in the "strong" band: suggest a next goal instead
+            -- (mirrors STRONG_DIMENSION_THRESHOLD in recommendations.py)
+            when min_score >= 80 then 'next_goal'
             when liquidity_score = min_score then 'liquidity_score'
             when income_stability_score = min_score then 'income_stability_score'
             when savings_score = min_score then 'savings_score'
@@ -32,12 +35,15 @@ labeled as (
 select
     user_id,
     case priority_dimension_key
+        when 'next_goal' then 'next goal'
         when 'liquidity_score' then 'liquidity'
         when 'income_stability_score' then 'income stability'
         when 'savings_score' then 'savings capacity'
         else 'debt exposure'
     end as priority_dimension,
     case priority_dimension_key
+        when 'next_goal'
+            then 'Your foundations are strong. Consider giving part of your monthly surplus a long-term job, such as a pillar 3a retirement account.'
         when 'liquidity_score' then 'Build a short-term cash buffer before increasing discretionary spending.'
         when 'income_stability_score'
             then 'Use a conservative monthly baseline and route irregular income toward savings.'
@@ -46,10 +52,15 @@ select
         else 'Prioritize high-interest debt payments and avoid adding new recurring credit obligations.'
     end as recommendation,
     case priority_dimension_key
+        when 'next_goal'
+            then format(
+                'All four health dimensions score 80 or higher, and your reserves cover %.1f months of spending.',
+                reserve_months
+            )
         when 'liquidity_score'
             then format(
-                'Average monthly net cashflow is CHF %.0f, limiting resilience to unexpected expenses.',
-                avg_net_cashflow
+                'Your reserves cover %.1f months of spending, short of the 3-month buffer that absorbs unexpected expenses.',
+                reserve_months
             )
         when 'income_stability_score'
             then format('Income coefficient of variation is %.2f, indicating relatively uneven inflows.', income_cv)

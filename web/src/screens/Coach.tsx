@@ -136,7 +136,7 @@ function LoanSimulator({ userId }: { userId: string }) {
           </div>
 
           <p className="mt-3 text-sm">
-            Left over each month after the payment:{' '}
+            Free each month after the payment (before savings):{' '}
             <span className={`tabular font-bold ${result.projected_free_cashflow < 0 ? 'text-danger' : 'text-mint-deep'}`}>
               {formatCHFRounded(result.projected_free_cashflow)}
             </span>

@@ -12,11 +12,13 @@ component_scores as (
         avg_income,
         avg_expense,
         avg_net_cashflow,
+        avg_free_cashflow,
+        reserve_months,
         avg_savings_rate,
         avg_debt_to_income,
         avg_discretionary_ratio,
         income_cv,
-        {{ scale_higher_is_better('safe_divide(greatest(avg_net_cashflow, 0), avg_expense)', 0.25, 0.75) }}
+        {{ scale_higher_is_better('reserve_months', 1.0, 3.0) }}
             as liquidity_score,
         {{ scale_lower_is_better('income_cv', 0.10, 0.35) }} as income_stability_score,
         {{ scale_higher_is_better('avg_savings_rate', 0.10, 0.25) }} as savings_score,

@@ -49,7 +49,7 @@ The current generated demo includes:
 | Synthetic users | 150 |
 | Behavioral segments | 5 |
 | K-Means silhouette score | 0.632 |
-| Credit readiness risk flags | 236 |
+| Credit readiness risk flags | 234 |
 
 ## Financial Health Score
 
@@ -57,7 +57,7 @@ The score is intentionally simple and auditable. It combines four dimensions:
 
 | Dimension | Interpretation |
 | --- | --- |
-| Liquidity | Ability to absorb short-term expenses through positive monthly cashflow. |
+| Liquidity | Reserves built up (current account + savings), measured in months of spending. Three months is the classic emergency-fund target. |
 | Income stability | Regularity of income inflows across months. |
 | Savings capacity | Share of income retained or transferred to savings. |
 | Debt exposure | Relative burden of debt payments compared with income. |
@@ -95,6 +95,8 @@ Recommendation: Automate a savings transfer near payday and target a first miles
 Explanation: Average savings rate is 4.7%, below a sustainable long-term target.
 ```
 
+When every dimension already scores 80 or higher, there is no weakness to fix, so the engine suggests a next goal (for example, a pillar 3a retirement account) instead.
+
 This is rule-based by design. In a regulated financial context, a transparent baseline is often a better first version than an opaque model that is difficult to audit.
 
 Every threshold used across the scoring, credit readiness, and risk-flagging logic is documented and justified in [docs/scoring-methodology.md](docs/scoring-methodology.md).
@@ -109,7 +111,7 @@ It combines:
 | --- | --- |
 | Income reliability | Stability of recurring inflows. |
 | Debt capacity | Current debt burden relative to income. |
-| Cashflow resilience | Free monthly cashflow after expenses and savings transfers. |
+| Cashflow resilience | Free monthly cashflow after expenses. Savings transfers count as reserves, not spending. |
 | Savings discipline | Regular ability to retain income. |
 | Spending control | Share of income allocated to discretionary categories. |
 
@@ -117,7 +119,7 @@ The system also generates explainable risk flags such as high debt burden, varia
 
 ## Loan Affordability Simulator
 
-The dashboard's Loan Simulator tab lets a user try a hypothetical loan amount, interest rate, and term against their own profile. It applies the same affordability guideline documented in [docs/scoring-methodology.md](docs/scoring-methodology.md) (total debt service within roughly a third of gross income) and reports the resulting monthly payment, debt-to-income, and projected free cashflow, with an affordable / marginal / not recommended verdict. Like the credit readiness score, this is a decision-support estimate, not a loan offer or approval.
+The dashboard's Loan Simulator tab lets a user try a hypothetical loan amount, interest rate, and term against their own profile. It applies the same affordability guideline documented in [docs/scoring-methodology.md](docs/scoring-methodology.md) (total debt service within roughly a third of gross income) and reports the resulting monthly payment, debt-to-income, and projected free cashflow (before savings transfers, which the customer could redirect), with an affordable / marginal / not recommended verdict. Like the credit readiness score, this is a decision-support estimate, not a loan offer or approval.
 
 ## Architecture
 

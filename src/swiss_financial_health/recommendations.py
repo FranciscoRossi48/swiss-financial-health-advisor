@@ -9,6 +9,10 @@ DIMENSION_LABELS = {
     "debt_score": "debt exposure",
 }
 
+# When even the weakest dimension reaches the "strong" band, there is no problem to fix, so the
+# coach suggests a next goal instead of pointing at a dimension that is already in good shape.
+STRONG_DIMENSION_THRESHOLD = 80.0
+
 
 def generate_recommendations(scored_users: pd.DataFrame) -> pd.DataFrame:
     rows: list[dict[str, object]] = []
@@ -16,12 +20,27 @@ def generate_recommendations(scored_users: pd.DataFrame) -> pd.DataFrame:
 
     for record in scored_users.to_dict("records"):
         weakest = min(score_cols, key=lambda col: record[col])
-        recommendation = recommendation_for_dimension(weakest, record)
+        if record[weakest] >= STRONG_DIMENSION_THRESHOLD:
+            rows.append(
+                {
+                    "user_id": record["user_id"],
+                    "priority_dimension": "next goal",
+                    "recommendation": (
+                        "Your foundations are strong. Consider giving part of your monthly surplus a "
+                        "long-term job, such as a pillar 3a retirement account."
+                    ),
+                    "explanation": (
+                        "All four health dimensions score 80 or higher, and your reserves cover "
+                        f"{record['reserve_months']:.1f} months of spending."
+                    ),
+                }
+            )
+            continue
         rows.append(
             {
                 "user_id": record["user_id"],
                 "priority_dimension": DIMENSION_LABELS[weakest],
-                "recommendation": recommendation,
+                "recommendation": recommendation_for_dimension(weakest, record),
                 "explanation": explanation_for_dimension(weakest, record),
             }
         )
@@ -44,8 +63,8 @@ def recommendation_for_dimension(dimension: str, record: dict[str, object]) -> s
 def explanation_for_dimension(dimension: str, record: dict[str, object]) -> str:
     if dimension == "liquidity_score":
         return (
-            f"Average monthly net cashflow is CHF {record['avg_net_cashflow']:.0f}, "
-            "limiting resilience to unexpected expenses."
+            f"Your reserves cover {record['reserve_months']:.1f} months of spending, "
+            "short of the 3-month buffer that absorbs unexpected expenses."
         )
     if dimension == "income_stability_score":
         return (

@@ -40,20 +40,20 @@ cashflow_flags as (
     select
         user_id,
         case
-            when safe_divide(avg_net_cashflow, avg_income) < 0 then 'Negative free cashflow'
+            when safe_divide(avg_free_cashflow, avg_income) < 0 then 'Negative free cashflow'
             else 'Thin cashflow buffer'
         end as flag,
-        case when safe_divide(avg_net_cashflow, avg_income) < 0 then 'high' else 'medium' end as severity,
+        case when safe_divide(avg_free_cashflow, avg_income) < 0 then 'high' else 'medium' end as severity,
         case
-            when safe_divide(avg_net_cashflow, avg_income) < 0
-                then 'Average monthly expenses and savings transfers exceed income.'
+            when safe_divide(avg_free_cashflow, avg_income) < 0
+                then 'Average monthly spending exceeds income.'
             else format(
                 'Free cashflow is only %.1f%% of average income.',
-                coalesce(safe_divide(avg_net_cashflow, avg_income), 0) * 100
+                coalesce(safe_divide(avg_free_cashflow, avg_income), 0) * 100
             )
         end as explanation
     from credit
-    where coalesce(safe_divide(avg_net_cashflow, avg_income), 0) < 0.05
+    where coalesce(safe_divide(avg_free_cashflow, avg_income), 0) < 0.05
 ),
 
 savings_flags as (

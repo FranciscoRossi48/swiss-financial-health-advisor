@@ -18,6 +18,8 @@ export interface UserScore {
   segment_label: string
   avg_income: number
   avg_net_cashflow: number
+  avg_free_cashflow: number
+  reserve_months: number
   avg_savings_rate: number
   avg_debt_to_income: number
 }

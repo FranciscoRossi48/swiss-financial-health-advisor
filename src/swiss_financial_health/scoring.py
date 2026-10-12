@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import numpy as np
 import pandas as pd
 
 SCORE_WEIGHTS = {
@@ -13,9 +12,8 @@ SCORE_WEIGHTS = {
 
 def compute_financial_health_score(user_summary: pd.DataFrame) -> pd.DataFrame:
     df = user_summary.copy()
-    liquidity_months = df["avg_net_cashflow"].clip(lower=0) / df["avg_expense"].replace(0, np.nan)
 
-    df["liquidity_score"] = scale_higher_is_better(liquidity_months, good=0.25, excellent=0.75)
+    df["liquidity_score"] = scale_higher_is_better(df["reserve_months"], good=1.0, excellent=3.0)
     df["income_stability_score"] = scale_lower_is_better(df["income_cv"], good=0.10, poor=0.35)
     df["savings_score"] = scale_higher_is_better(df["avg_savings_rate"], good=0.10, excellent=0.25)
     df["debt_score"] = scale_lower_is_better(df["avg_debt_to_income"], good=0.05, poor=0.25)

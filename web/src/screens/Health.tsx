@@ -89,7 +89,7 @@ export function Health({ userId }: { userId: string }) {
       </Card>
 
       <Card className="rise">
-        <SectionTitle>Left over each month</SectionTitle>
+        <SectionTitle>Left over after saving, each month</SectionTitle>
         {monthly.data ? <CashflowChart months={monthly.data} /> : <Skeleton className="h-36" />}
       </Card>
 

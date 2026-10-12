@@ -33,7 +33,7 @@ def monthly_payment_for_loan(principal: float, annual_rate: float, term_years: i
 
 def simulate_loan_affordability(
     avg_income: float,
-    avg_net_cashflow: float,
+    avg_free_cashflow: float,
     avg_debt_to_income: float,
     loan_amount: float,
     annual_rate: float,
@@ -43,12 +43,13 @@ def simulate_loan_affordability(
 
     This is a decision-support simulation, not a lending decision: it applies the same
     transparent affordability ceiling used elsewhere in the prototype to a user-chosen
-    loan amount, rate, and term.
+    loan amount, rate, and term. Free cashflow is measured before savings transfers, since a
+    customer can redirect part of their savings toward a repayment.
     """
     monthly_payment = monthly_payment_for_loan(loan_amount, annual_rate, term_years)
     current_debt_payments = avg_debt_to_income * avg_income
     resulting_debt_to_income = (current_debt_payments + monthly_payment) / avg_income if avg_income else 1.0
-    projected_free_cashflow = avg_net_cashflow - monthly_payment
+    projected_free_cashflow = avg_free_cashflow - monthly_payment
 
     if resulting_debt_to_income > AFFORDABILITY_CEILING:
         verdict = "not recommended"
@@ -67,7 +68,7 @@ def simulate_loan_affordability(
         explanation = (
             f"Total debt service would be {resulting_debt_to_income:.1%} of income, within the "
             f"{AFFORDABILITY_CEILING:.0%} affordability guideline, with CHF {projected_free_cashflow:.0f} "
-            "of free cashflow remaining."
+            "of free cashflow remaining before savings transfers."
         )
 
     return LoanAffordabilityResult(

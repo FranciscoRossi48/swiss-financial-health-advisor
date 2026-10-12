@@ -26,7 +26,7 @@ def test_monthly_payment_for_loan_is_zero_for_non_positive_principal_or_term():
 def test_simulate_loan_affordability_marks_small_loan_as_affordable():
     result = simulate_loan_affordability(
         avg_income=6000.0,
-        avg_net_cashflow=1000.0,
+        avg_free_cashflow=1000.0,
         avg_debt_to_income=0.05,
         loan_amount=5000.0,
         annual_rate=0.05,
@@ -40,7 +40,7 @@ def test_simulate_loan_affordability_marks_small_loan_as_affordable():
 def test_simulate_loan_affordability_marks_oversized_loan_as_not_recommended():
     result = simulate_loan_affordability(
         avg_income=4000.0,
-        avg_net_cashflow=200.0,
+        avg_free_cashflow=200.0,
         avg_debt_to_income=0.20,
         loan_amount=100_000.0,
         annual_rate=0.08,
@@ -53,7 +53,7 @@ def test_simulate_loan_affordability_marks_oversized_loan_as_not_recommended():
 def test_simulate_loan_affordability_marks_marginal_when_within_ceiling_but_cashflow_negative():
     result = simulate_loan_affordability(
         avg_income=6000.0,
-        avg_net_cashflow=100.0,
+        avg_free_cashflow=100.0,
         avg_debt_to_income=0.10,
         loan_amount=15_000.0,
         annual_rate=0.06,
@@ -67,7 +67,7 @@ def test_simulate_loan_affordability_marks_marginal_when_within_ceiling_but_cash
 def test_simulate_loan_affordability_handles_zero_income_without_error():
     result = simulate_loan_affordability(
         avg_income=0.0,
-        avg_net_cashflow=0.0,
+        avg_free_cashflow=0.0,
         avg_debt_to_income=0.0,
         loan_amount=5000.0,
         annual_rate=0.05,

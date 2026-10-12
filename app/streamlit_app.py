@@ -208,7 +208,8 @@ with home_tab:
                 [
                     ["Average income", f"CHF {user['avg_income']:,.0f}"],
                     ["Average expenses", f"CHF {user['avg_expense']:,.0f}"],
-                    ["Net cashflow", f"CHF {user['avg_net_cashflow']:,.0f}"],
+                    ["Free cashflow", f"CHF {user['avg_free_cashflow']:,.0f}"],
+                    ["Reserves", f"{user['reserve_months']:.1f} months of spending"],
                     ["Savings rate", f"{user['avg_savings_rate']:.1%}"],
                     ["Debt-to-income", f"{user['avg_debt_to_income']:.1%}"],
                 ],
@@ -342,7 +343,7 @@ with simulator_tab:
 
     result = simulate_loan_affordability(
         avg_income=user["avg_income"],
-        avg_net_cashflow=user["avg_net_cashflow"],
+        avg_free_cashflow=user["avg_free_cashflow"],
         avg_debt_to_income=user["avg_debt_to_income"],
         loan_amount=loan_amount,
         annual_rate=annual_rate_pct / 100,

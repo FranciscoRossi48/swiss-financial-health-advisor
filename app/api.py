@@ -69,6 +69,8 @@ class UserScore(BaseModel):
     segment_label: str
     avg_income: float
     avg_net_cashflow: float
+    avg_free_cashflow: float
+    reserve_months: float
     avg_savings_rate: float
     avg_debt_to_income: float
 
@@ -258,6 +260,8 @@ def get_user(user_id: str) -> UserScore:
         segment_label=record["segment_label"],
         avg_income=float(record["avg_income"]),
         avg_net_cashflow=float(record["avg_net_cashflow"]),
+        avg_free_cashflow=float(record["avg_free_cashflow"]),
+        reserve_months=float(record["reserve_months"]),
         avg_savings_rate=float(record["avg_savings_rate"]),
         avg_debt_to_income=float(record["avg_debt_to_income"]),
     )
@@ -396,7 +400,7 @@ def loan_affordability(user_id: str, request: LoanAffordabilityRequest) -> LoanA
 
     result = simulate_loan_affordability(
         avg_income=float(user["avg_income"]),
-        avg_net_cashflow=float(user["avg_net_cashflow"]),
+        avg_free_cashflow=float(user["avg_free_cashflow"]),
         avg_debt_to_income=float(user["avg_debt_to_income"]),
         loan_amount=request.loan_amount,
         annual_rate=request.annual_rate,

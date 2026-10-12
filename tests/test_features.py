@@ -76,6 +76,7 @@ def test_build_monthly_features_aggregates_categories_correctly():
     assert jan["savings"] == 150.0
     assert jan["debt_payments"] == 50.0
     assert jan["discretionary_spend"] == 100.0
+    assert jan["free_cashflow"] == pytest.approx(1000.0 - 550.0)
     assert jan["net_cashflow"] == pytest.approx(1000.0 - 550.0 - 150.0)
     assert jan["debt_to_income"] == pytest.approx(50.0 / 1000.0)
     assert jan["discretionary_ratio"] == pytest.approx(100.0 / 1000.0)
@@ -105,6 +106,14 @@ def test_build_user_summary_averages_monthly_features():
     assert row["user_id"] == "U1"
     assert row["avg_income"] == pytest.approx(1000.0)
     assert row["avg_expense"] == pytest.approx((550.0 + 400.0) / 2)
+
+
+def test_build_user_summary_counts_savings_transfers_as_reserves():
+    summary = build_user_summary(build_monthly_features(_transactions())).iloc[0]
+
+    # Jan: 1000 - 550 = 450 free cashflow (150 of it moved to savings); Feb: 1000 - 400 = 600.
+    assert summary["avg_free_cashflow"] == pytest.approx((450.0 + 600.0) / 2)
+    assert summary["reserve_months"] == pytest.approx((450.0 + 600.0) / ((550.0 + 400.0) / 2))
 
 
 def test_safe_ratio_returns_zero_on_zero_denominator():

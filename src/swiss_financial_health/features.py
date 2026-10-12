@@ -48,7 +48,10 @@ def build_monthly_features(transactions: pd.DataFrame) -> pd.DataFrame:
         ["debt_payments", "discretionary_spend"]
     ].fillna(0)
 
-    features["net_cashflow"] = features["income"] - features["expense"] - features["savings"]
+    # Free cashflow treats savings transfers as reserves the customer keeps, not as spending.
+    # Net cashflow is what is left on the current account after those transfers.
+    features["free_cashflow"] = features["income"] - features["expense"]
+    features["net_cashflow"] = features["free_cashflow"] - features["savings"]
     features["savings_rate"] = safe_ratio(
         features["savings"] + features["net_cashflow"].clip(lower=0), features["income"]
     )
@@ -75,13 +78,23 @@ def build_user_summary(monthly_features: pd.DataFrame) -> pd.DataFrame:
             avg_debt_to_income=("debt_to_income", "mean"),
             avg_discretionary_ratio=("discretionary_ratio", "mean"),
             avg_net_cashflow=("net_cashflow", "mean"),
+            avg_free_cashflow=("free_cashflow", "mean"),
+            total_free_cashflow=("free_cashflow", "sum"),
             income_cv=("income_cv", "mean"),
         )
         .reset_index()
     )
-    return summary
+    # Reserves built over the observation window (current account + savings pocket, assuming no
+    # opening balance), expressed in months of average spending: an emergency-fund style measure.
+    summary["reserve_months"] = safe_ratio_signed(summary["total_free_cashflow"], summary["avg_expense"])
+    return summary.drop(columns="total_free_cashflow")
 
 
 def safe_ratio(numerator: pd.Series, denominator: pd.Series) -> pd.Series:
+    return safe_ratio_signed(numerator, denominator).clip(lower=0)
+
+
+def safe_ratio_signed(numerator: pd.Series, denominator: pd.Series) -> pd.Series:
+    """Like safe_ratio, but keeps negative values (e.g. reserves that were drawn down)."""
     ratio = numerator / denominator.replace(0, pd.NA)
-    return ratio.fillna(0).clip(lower=0)
+    return ratio.astype("Float64").fillna(0).astype(float)
