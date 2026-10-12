@@ -3,11 +3,11 @@
 [![CI](https://github.com/FranciscoRossi48/swiss-financial-health-advisor/actions/workflows/ci.yml/badge.svg)](https://github.com/FranciscoRossi48/swiss-financial-health-advisor/actions/workflows/ci.yml)
 [![Live Demo](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://swiss-financial-health-advisor.streamlit.app)
 
-Prescriptive analytics prototype for personal financial health and credit readiness in a Swiss neobank context.
+Banking-app prototype for personal financial health, credit readiness and prescriptive guidance in a Swiss neobank context.
 
 🔗 **[Try the live demo](https://swiss-financial-health-advisor.streamlit.app)** — no cloning required.
 
-This project turns a final degree thesis concept into a working data science product prototype: synthetic Open Banking-style transactions are transformed into customer segments, an explainable financial health score, a credit readiness signal, risk flags, and personalized recommendations.
+This project turns a final degree thesis concept into a working fintech product prototype: synthetic Open Banking-style transactions are transformed into customer-facing account movements, customer segments, an explainable financial health score, a credit readiness signal, risk flags, and personalized recommendations.
 
 ![Dashboard screenshot](docs/assets/dashboard-overview.png)
 
@@ -22,13 +22,14 @@ The context is inspired by the Swiss fintech ecosystem and by a final degree pro
 ## What The Prototype Does
 
 1. Generates fully synthetic personal banking transactions.
-2. Engineers monthly behavioral features per user.
-3. Builds an explainable Financial Health Score from 0 to 100.
-4. Segments users with K-Means clustering.
-5. Adds a Credit Readiness Score for non-decisional affordability guidance.
-6. Produces risk flags and prescriptive recommendations based on each user's weakest dimensions.
-7. Simulates whether a hypothetical new loan fits a user's current financial profile.
-8. Presents the output in a Streamlit dashboard.
+2. Presents customer-facing account movements, spending categories, income, expenses, and savings transfers.
+3. Engineers monthly behavioral features per user.
+4. Builds an explainable Financial Health Score from 0 to 100.
+5. Segments users with K-Means clustering.
+6. Adds a Credit Readiness Score for non-decisional affordability guidance.
+7. Produces risk flags and prescriptive recommendations based on each user's weakest dimensions.
+8. Simulates whether a hypothetical new loan fits a user's current financial profile.
+9. Presents the output in a Streamlit banking-app prototype inspired by neon Switzerland AG.
 
 ## Analytical Validation
 
