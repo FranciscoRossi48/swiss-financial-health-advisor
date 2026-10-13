@@ -9,6 +9,7 @@ WORKDIR /app
 COPY pyproject.toml ./
 COPY src/ src/
 COPY app/ app/
+COPY .streamlit/ .streamlit/
 COPY scripts/ scripts/
 
 RUN pip install --no-cache-dir ".[app,api]"

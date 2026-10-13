@@ -1,0 +1,29 @@
+# Pulse theme for the Streamlit analyst view, matching the tokens in web/src/index.css.
+# The base is pinned to light so the custom styling in app/streamlit_app.py looks the same
+# whatever colour scheme the viewer's system uses.
+
+[theme]
+base = "light"
+primaryColor = "#0e9f6e"
+backgroundColor = "#f3f6f4"
+secondaryBackgroundColor = "#ffffff"
+textColor = "#0c1a17"
+linkColor = "#0e9f6e"
+borderColor = "#e3e9e6"
+dataframeBorderColor = "#e3e9e6"
+dataframeHeaderBackgroundColor = "#f3f6f4"
+showWidgetBorder = true
+baseRadius = "0.75rem"
+buttonRadius = "full"
+font = "Manrope:https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+headingFont = "Manrope:https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+headingFontWeights = [800, 700, 700, 700, 600, 600]
+metricValueFontWeight = 800
+redColor = "#e5484d"
+orangeColor = "#d98a13"
+blueColor = "#3a7bd5"
+greenColor = "#0e9f6e"
+chartCategoricalColors = ["#1fd99a", "#0c1a17", "#3a7bd5", "#d98a13", "#e5484d", "#6b4fd8"]
+
+[client]
+toolbarMode = "minimal"
