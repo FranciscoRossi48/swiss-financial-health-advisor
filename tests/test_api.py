@@ -51,7 +51,17 @@ def test_get_user_recommendation_returns_expected_fields():
     response = client.get(f"/users/{user_id}/recommendation")
     assert response.status_code == 200
     body = response.json()
-    assert set(body) == {"priority_dimension", "recommendation", "explanation"}
+    assert set(body) == {"priority_dimension", "recommendation", "explanation", "steps", "projected_score"}
+
+
+def test_recommendation_plan_points_add_up_to_the_projected_score():
+    for user_id in [user["user_id"] for user in client.get("/demo-users").json()]:
+        score = client.get(f"/users/{user_id}").json()["financial_health_score"]
+        body = client.get(f"/users/{user_id}/recommendation").json()
+        assert len(body["steps"]) == 3
+        assert body["projected_score"] == pytest.approx(
+            min(100, score + sum(s["points"] for s in body["steps"]))
+        )
 
 
 def test_loan_affordability_returns_a_verdict_for_a_known_user():
@@ -157,3 +167,25 @@ def test_get_user_health_weights_reproduce_the_scores():
 def test_new_user_endpoints_return_404_for_unknown_user(path):
     response = client.get(f"/users/does-not-exist/{path}")
     assert response.status_code == 404
+
+
+def test_health_history_ends_at_the_current_score():
+    user_id = client.get("/users").json()[0]
+    history = client.get(f"/users/{user_id}/health/history").json()
+    assert [point["month"] for point in history] == sorted(point["month"] for point in history)
+    assert len(history) == 12
+    current = client.get(f"/users/{user_id}").json()["financial_health_score"]
+    assert history[-1]["score"] == pytest.approx(current)
+
+
+def test_health_history_returns_404_for_unknown_user():
+    assert client.get("/users/does-not-exist/health/history").status_code == 404
+
+
+def test_health_explains_every_financial_health_dimension():
+    user_id = client.get("/users").json()[0]
+    body = client.get(f"/users/{user_id}/health").json()
+    for dim in body["financial_health"]["dimensions"]:
+        assert dim["driver"] and dim["target"]
+        assert dim["points"] + dim["points_left"] == pytest.approx(dim["weight"] * 100, abs=0.1)
+    assert all(dim["driver"] is None for dim in body["credit_readiness"]["dimensions"])

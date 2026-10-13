@@ -63,6 +63,15 @@ export interface ScoreDimension {
   label: string
   score: number
   weight: number
+  points: number
+  points_left: number
+  driver: string | null
+  target: string | null
+}
+
+export interface ScorePoint {
+  month: string
+  score: number
 }
 
 export interface ScoreBreakdown {
@@ -85,10 +94,18 @@ export interface HealthProfile {
   segment: { label: string; description: string; comparison: SegmentComparison[] }
 }
 
+export interface PlanStep {
+  title: string
+  body: string
+  points: number
+}
+
 export interface Recommendation {
   priority_dimension: string
   recommendation: string
   explanation: string
+  steps: PlanStep[]
+  projected_score: number
 }
 
 export interface RiskFlag {
@@ -120,6 +137,7 @@ export const api = {
   overview: (id: string) => request<AccountOverview>(`/users/${id}/overview`),
   monthly: (id: string) => request<MonthlySummary[]>(`/users/${id}/monthly`),
   health: (id: string) => request<HealthProfile>(`/users/${id}/health`),
+  healthHistory: (id: string) => request<ScorePoint[]>(`/users/${id}/health/history`),
   recommendation: (id: string) => request<Recommendation>(`/users/${id}/recommendation`),
   riskFlags: (id: string) => request<RiskFlag[]>(`/users/${id}/risk-flags`),
   transactions: (id: string, params: { type?: TransactionType; month?: string; limit?: number } = {}) => {

@@ -89,3 +89,40 @@ export function PersonaSheet({ open, onClose, ...listProps }: PersonaListProps &
     </div>
   )
 }
+
+/** Compact persona switcher for the desktop side panel. */
+export function PersonaPills({ users, selected, onSelect }: Omit<PersonaListProps, 'dark'>) {
+  const active = users.find((user) => user.user_id === selected)
+  return (
+    <>
+      <div className="flex flex-wrap gap-1.5">
+        {users.map((user) => {
+          const isActive = user.user_id === selected
+          const tone = TONE_CLASSES[bandTone(user.health_band)]
+          return (
+            <button
+              key={user.user_id}
+              type="button"
+              onClick={() => onSelect(user.user_id)}
+              aria-pressed={isActive}
+              className={`flex items-center gap-2 rounded-full py-1 pl-1 pr-2.5 transition-colors ${
+                isActive ? 'bg-white ring-2 ring-ink' : 'bg-white/50 hover:bg-white'
+              }`}
+            >
+              <Avatar userId={user.user_id} size={28} />
+              <span className="text-[13px] font-bold">{personaName(user.user_id)}</span>
+              <span className={`tabular rounded-full px-1.5 py-px text-[11px] font-bold ${tone.bg} ${tone.text}`}>
+                {Math.round(user.financial_health_score)}
+              </span>
+            </button>
+          )
+        })}
+      </div>
+      {active && (
+        <p className="mt-2 text-xs text-muted">
+          {personaName(active.user_id)} · {active.segment_label} — one synthetic customer per K-Means segment.
+        </p>
+      )}
+    </>
+  )
+}

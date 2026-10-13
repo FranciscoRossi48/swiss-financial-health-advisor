@@ -10,6 +10,7 @@ from swiss_financial_health.clustering import fit_user_segments
 from swiss_financial_health.credit_readiness import build_risk_flags, compute_credit_readiness
 from swiss_financial_health.data_generation import generate_synthetic_transactions
 from swiss_financial_health.features import build_monthly_features, build_user_summary
+from swiss_financial_health.history import compute_score_history
 from swiss_financial_health.recommendations import generate_recommendations
 from swiss_financial_health.scoring import compute_financial_health_score
 
@@ -27,6 +28,7 @@ def main() -> None:
     segmented_users, centroids, silhouette = fit_user_segments(credit_users, n_clusters=5)
     recommendations = generate_recommendations(segmented_users)
     risk_flags = build_risk_flags(segmented_users)
+    score_history = compute_score_history(monthly_features)
 
     transactions.to_csv(DATA / "synthetic_transactions.csv", index=False)
     monthly_features.to_csv(DATA / "user_monthly_features.csv", index=False)
@@ -34,6 +36,7 @@ def main() -> None:
     recommendations.to_csv(DATA / "recommendations.csv", index=False)
     risk_flags.to_csv(DATA / "risk_flags.csv", index=False)
     centroids.to_csv(DATA / "segment_centroids.csv", index=False)
+    score_history.to_csv(DATA / "score_history.csv", index=False)
 
     print(f"Generated {len(transactions):,} synthetic transactions")
     print(f"Generated {len(segmented_users):,} user profiles")

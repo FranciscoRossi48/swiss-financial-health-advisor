@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { api } from './api'
 import { Logo } from './components/Logo'
-import { Avatar, PersonaList, PersonaSheet } from './components/PersonaPicker'
+import { Avatar, PersonaPills, PersonaSheet } from './components/PersonaPicker'
 import { TabBar, type Tab } from './components/TabBar'
-import { ErrorState, Skeleton } from './components/ui'
+import { Card, ErrorState, Skeleton } from './components/ui'
+import { SHOW_CASE_STUDY } from './config'
 import { personaName } from './format'
 import { Activity } from './screens/Activity'
 import { Coach } from './screens/Coach'
@@ -12,6 +13,21 @@ import { Home } from './screens/Home'
 import { useApi } from './useApi'
 
 const STORAGE_KEY = 'pulse:user'
+
+const PIPELINE = [
+  { title: 'Transactions', body: 'Synthetic Open Banking-style movements, validated.' },
+  { title: 'Behaviour', body: 'Monthly features: cashflow, savings rate, debt-to-income, volatility.' },
+  { title: 'Score + profile', body: 'Weighted 0–100 index and K-Means money profile.' },
+  { title: 'Guidance', body: 'Rule-based plan aimed at the weakest dimension.' },
+]
+
+// From the README's Demo Metrics table.
+const METRICS = [
+  { value: '57k', label: 'transactions' },
+  { value: '150', label: 'customers' },
+  { value: '5', label: 'segments' },
+  { value: '0.63', label: 'silhouette' },
+]
 
 const TITLES: Record<Exclude<Tab, 'home'>, string> = {
   activity: 'Activity',
@@ -55,22 +71,23 @@ export default function App() {
 
   return (
     <div className="min-h-full bg-canvas lg:flex lg:items-center lg:justify-center lg:gap-20 lg:bg-[radial-gradient(circle_at_20%_20%,#dcf7eb,transparent_45%),linear-gradient(#f3f6f4,#e9efec)] lg:p-10">
-      <aside className="hidden w-[360px] lg:block">
+      <aside className="hidden w-[380px] lg:block">
         <Logo size={40} />
         <h1 className="mt-8 text-4xl font-extrabold leading-[1.1] tracking-tight">
           Your money,
           <br />
           and what it says about you.
         </h1>
-        <p className="mt-4 text-muted">
-          A banking-app prototype that pairs everyday account activity with an explainable financial health index,
-          a behavioural money profile and personal guidance.
+        <p className="mt-3.5 text-muted">
+          A banking-app prototype that turns raw transactions into an explainable health score, a money profile and
+          a plan you can act on.
         </p>
-        <p className="mb-3 mt-8 text-xs font-bold uppercase tracking-wide text-muted">Try a demo customer</p>
-        {demoUsers.data ? <PersonaList {...listProps} /> : <Skeleton className="h-72" />}
-        <p className="mt-8 text-xs text-muted">
-          Pulse is a fictional brand. All customers and transactions are synthetic. Built as part of a Data Science
-          thesis project.
+        {SHOW_CASE_STUDY && <HowPulseThinks />}
+        <p className="mb-2.5 mt-6 text-xs font-bold uppercase tracking-wide text-muted">Try a demo customer</p>
+        {demoUsers.data ? <PersonaPills {...listProps} /> : <Skeleton className="h-20" />}
+        <p className="mt-6 text-xs text-muted">
+          Pulse is a fictional brand. All customers and transactions are synthetic. Data Science thesis project ·
+          Universidad Siglo 21.
         </p>
       </aside>
 
@@ -103,7 +120,7 @@ export default function App() {
             <div key={`${activeUser}-${tab}`}>
               {tab === 'home' && <Home userId={activeUser} onNavigate={setTab} />}
               {tab === 'activity' && <Activity userId={activeUser} />}
-              {tab === 'health' && <Health userId={activeUser} />}
+              {tab === 'health' && <Health userId={activeUser} onNavigate={setTab} />}
               {tab === 'coach' && <Coach userId={activeUser} />}
             </div>
           ) : (
@@ -118,5 +135,34 @@ export default function App() {
         <PersonaSheet open={sheetOpen} onClose={() => setSheetOpen(false)} {...listProps} />
       </div>
     </div>
+  )
+}
+
+function HowPulseThinks() {
+  return (
+    <Card className="mt-7" padding="px-[18px] pb-4 pt-[18px]">
+      <p className="text-xs font-bold uppercase tracking-wide text-muted">How Pulse thinks</p>
+      <ol className="mt-3 space-y-2.5">
+        {PIPELINE.map((step, index) => (
+          <li key={step.title} className="grid grid-cols-[24px_1fr] items-start gap-2.5">
+            <span className="tabular flex h-6 w-6 items-center justify-center rounded-lg bg-ink text-xs font-extrabold text-mint">
+              {index + 1}
+            </span>
+            <span>
+              <span className="block text-sm font-bold">{step.title}</span>
+              <span className="block text-xs text-muted">{step.body}</span>
+            </span>
+          </li>
+        ))}
+      </ol>
+      <div className="mt-3.5 grid grid-cols-4 gap-2 border-t border-line pt-3.5">
+        {METRICS.map((metric) => (
+          <div key={metric.label}>
+            <p className="tabular text-[15px] font-extrabold tracking-tight">{metric.value}</p>
+            <p className="text-[11px] leading-[14px] text-muted">{metric.label}</p>
+          </div>
+        ))}
+      </div>
+    </Card>
   )
 }

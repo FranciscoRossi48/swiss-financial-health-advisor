@@ -1,8 +1,20 @@
 import type { ReactNode } from 'react'
 import { TONE_CLASSES, type Tone } from '../format'
 
-export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <section className={`rounded-3xl bg-white p-5 shadow-[0_1px_2px_rgba(12,26,23,0.04)] ${className}`}>{children}</section>
+export function Card({
+  children,
+  className = '',
+  padding = 'p-5',
+}: {
+  children: ReactNode
+  className?: string
+  padding?: string
+}) {
+  return (
+    <section className={`rounded-3xl bg-white shadow-[0_1px_2px_rgba(12,26,23,0.04)] ${padding} ${className}`}>
+      {children}
+    </section>
+  )
 }
 
 export function SectionTitle({ children, action }: { children: ReactNode; action?: ReactNode }) {

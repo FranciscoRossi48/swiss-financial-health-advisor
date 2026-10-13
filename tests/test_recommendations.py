@@ -4,6 +4,7 @@ import pytest
 from swiss_financial_health.recommendations import (
     explanation_for_dimension,
     generate_recommendations,
+    plan_steps,
     recommendation_for_dimension,
 )
 
@@ -20,6 +21,10 @@ def _record(**overrides):
         "income_cv": 0.10,
         "avg_savings_rate": 0.15,
         "avg_debt_to_income": 0.05,
+        "avg_income": 6000.0,
+        "avg_expense": 4500.0,
+        "avg_free_cashflow": 900.0,
+        "avg_discretionary_ratio": 0.2,
     }
     record.update(overrides)
     return record
@@ -63,3 +68,26 @@ def test_recommendation_and_explanation_exist_for_every_dimension(dimension):
 def test_recommendation_for_dimension_rejects_unknown_dimension():
     with pytest.raises(ValueError):
         recommendation_for_dimension("unknown_score", _record())
+
+
+@pytest.mark.parametrize(
+    ("priority", "dimension", "weight"),
+    [
+        ("liquidity", "liquidity_score", 0.3),
+        ("savings capacity", "savings_score", 0.3),
+        ("income stability", "income_stability_score", 0.2),
+        ("debt exposure", "debt_score", 0.2),
+    ],
+)
+def test_plan_steps_split_the_remaining_points_into_three_milestones(priority, dimension, weight):
+    record = _record(**{dimension: 40.0})
+    steps = plan_steps(priority, record)
+    assert len(steps) == 3
+    assert all(step["title"] and step["body"] for step in steps)
+    assert sum(step["points"] for step in steps) == round(weight * 60)
+
+
+def test_plan_steps_for_a_next_goal_carry_no_points():
+    steps = plan_steps("next goal", _record())
+    assert len(steps) == 3
+    assert all(step["points"] == 0 for step in steps)

@@ -17,7 +17,9 @@ DATA = ROOT / "data"
 
 from swiss_financial_health.affordability import simulate_loan_affordability
 from swiss_financial_health.credit_readiness import CREDIT_READINESS_WEIGHTS
+from swiss_financial_health.explanations import dimension_driver, dimension_target
 from swiss_financial_health.presentation import SEGMENT_DESCRIPTIONS, category_label, merchant_name
+from swiss_financial_health.recommendations import plan_steps
 from swiss_financial_health.scoring import SCORE_WEIGHTS
 
 app = FastAPI(
@@ -131,6 +133,10 @@ class ScoreDimension(BaseModel):
     label: str
     score: float
     weight: float
+    points: float = Field(description="Points this dimension contributes to the composite score.")
+    points_left: float = Field(description="Points still available in this dimension.")
+    driver: str | None = Field(default=None, description="What in the customer's numbers drives the score.")
+    target: str | None = Field(default=None, description="What would earn the remaining points.")
 
 
 class ScoreBreakdown(BaseModel):
@@ -157,6 +163,25 @@ class HealthProfile(BaseModel):
     financial_health: ScoreBreakdown
     credit_readiness: ScoreBreakdown
     segment: SegmentProfile
+
+
+class ScorePoint(BaseModel):
+    month: str
+    score: float
+
+
+class PlanStep(BaseModel):
+    title: str
+    body: str
+    points: int = Field(description="Estimated score gain once this step's milestone is reached.")
+
+
+class Recommendation(BaseModel):
+    priority_dimension: str
+    recommendation: str
+    explanation: str
+    steps: list[PlanStep]
+    projected_score: float = Field(description="Score if every plan step is completed.")
 
 
 class DemoUser(BaseModel):
@@ -199,12 +224,28 @@ def _load_centroids() -> pd.DataFrame:
     return pd.read_csv(DATA / "segment_centroids.csv")
 
 
-def _breakdown(record: pd.Series, score_col: str, band_col: str, weights: dict[str, float]) -> ScoreBreakdown:
+@lru_cache(maxsize=1)
+def _load_score_history() -> pd.DataFrame:
+    return pd.read_csv(DATA / "score_history.csv")
+
+
+def _breakdown(
+    record: pd.Series, score_col: str, band_col: str, weights: dict[str, float], explain: bool = False
+) -> ScoreBreakdown:
     return ScoreBreakdown(
         score=float(record[score_col]),
         band=record[band_col],
         dimensions=[
-            ScoreDimension(key=col, label=DIMENSION_LABELS[col], score=float(record[col]), weight=weight)
+            ScoreDimension(
+                key=col,
+                label=DIMENSION_LABELS[col],
+                score=float(record[col]),
+                weight=weight,
+                points=round(float(record[col]) * weight, 1),
+                points_left=round(weight * (100 - float(record[col])), 1),
+                driver=dimension_driver(col, record) if explain else None,
+                target=dimension_target(col, record) if explain else None,
+            )
             for col, weight in weights.items()
         ],
     )
@@ -275,12 +316,21 @@ def get_user_risk_flags(user_id: str) -> list[dict[str, str]]:
     return user_flags.to_dict("records")
 
 
-@app.get("/users/{user_id}/recommendation")
-def get_user_recommendation(user_id: str) -> dict[str, str]:
-    _get_user_or_404(user_id)
+@app.get("/users/{user_id}/recommendation", response_model=Recommendation)
+def get_user_recommendation(user_id: str) -> Recommendation:
+    user = _get_user_or_404(user_id)
     recommendations = _load_recommendations()
-    match = recommendations.loc[recommendations["user_id"] == user_id]
-    return match.iloc[0][["priority_dimension", "recommendation", "explanation"]].to_dict()
+    match = recommendations.loc[recommendations["user_id"] == user_id].iloc[0]
+    steps = [PlanStep(**step) for step in plan_steps(match["priority_dimension"], user.to_dict())]
+    return Recommendation(
+        priority_dimension=match["priority_dimension"],
+        recommendation=match["recommendation"],
+        explanation=match["explanation"],
+        steps=steps,
+        projected_score=min(
+            100.0, round(float(user["financial_health_score"]) + sum(s.points for s in steps), 1)
+        ),
+    )
 
 
 @app.get("/users/{user_id}/transactions", response_model=list[Transaction])
@@ -374,7 +424,9 @@ def get_user_health(user_id: str) -> HealthProfile:
     centroid = centroids.loc[centroids["segment_label"] == user["segment_label"]].iloc[0]
     return HealthProfile(
         user_id=user_id,
-        financial_health=_breakdown(user, "financial_health_score", "health_band", SCORE_WEIGHTS),
+        financial_health=_breakdown(
+            user, "financial_health_score", "health_band", SCORE_WEIGHTS, explain=True
+        ),
         credit_readiness=_breakdown(
             user, "credit_readiness_score", "credit_readiness_band", CREDIT_READINESS_WEIGHTS
         ),
@@ -392,6 +444,18 @@ def get_user_health(user_id: str) -> HealthProfile:
             ],
         ),
     )
+
+
+@app.get("/users/{user_id}/health/history", response_model=list[ScorePoint])
+def get_user_health_history(user_id: str) -> list[ScorePoint]:
+    """Financial Health Score per month, computed on an expanding window (see history.py)."""
+    _get_user_or_404(user_id)
+    history = _load_score_history()
+    user_history = history.loc[history["user_id"] == user_id].sort_values("month")
+    return [
+        ScorePoint(month=row.month[:7], score=float(row.financial_health_score))
+        for row in user_history.itertuples()
+    ]
 
 
 @app.post("/users/{user_id}/loan-affordability", response_model=LoanAffordabilityResponse)

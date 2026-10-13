@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react'
-import { api, type TransactionType } from '../api'
-import { Card, ErrorState, SectionTitle, Skeleton } from '../components/ui'
+import { useState } from 'react'
+import { api, type MonthlySummary, type TransactionType } from '../api'
 import { TransactionList } from '../components/TransactionList'
+import { Card, ErrorState, SectionTitle, Skeleton } from '../components/ui'
 import { formatCHFRounded, formatMonth } from '../format'
 import { useApi } from '../useApi'
 
@@ -14,45 +14,33 @@ const FILTERS: { id: TransactionType | 'all'; label: string }[] = [
 
 export function Activity({ userId }: { userId: string }) {
   const monthly = useApi(`monthly:${userId}`, () => api.monthly(userId))
-  const months = useMemo(() => monthly.data?.map((m) => m.month).reverse() ?? [], [monthly.data])
   const [month, setMonth] = useState<string | null>(null)
   const [filter, setFilter] = useState<TransactionType | 'all'>('all')
 
-  const selectedMonth = month ?? months[0] ?? null
+  const months = monthly.data ?? []
+  const selectedMonth = month ?? months[months.length - 1]?.month ?? null
   const transactions = useApi(selectedMonth ? `tx:${userId}:${selectedMonth}` : null, () =>
     api.transactions(userId, { month: selectedMonth!, limit: 500 }),
   )
 
   if (monthly.error) return <ErrorState error={monthly.error} />
 
-  const summary = monthly.data?.find((m) => m.month === selectedMonth)
+  const summary = months.find((m) => m.month === selectedMonth)
+  const bestMonth = months.length ? Math.max(...months.map((m) => m.net_cashflow)) : null
   const visible = transactions.data?.filter((tx) => filter === 'all' || tx.transaction_type === filter) ?? []
 
   return (
     <div className="space-y-4">
-      <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4">
-        {months.length === 0 && <Skeleton className="h-9 w-full" />}
-        {months.map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => setMonth(m)}
-            className={`shrink-0 rounded-full px-4 py-2 text-sm font-bold transition-colors ${
-              m === selectedMonth ? 'bg-ink text-white' : 'bg-white text-muted hover:text-ink'
-            }`}
-          >
-            {formatMonth(m, 'short')}
-          </button>
-        ))}
-      </div>
+      {monthly.data && selectedMonth ? (
+        <LeftOverChart months={months} selected={selectedMonth} onSelect={setMonth} />
+      ) : (
+        <Skeleton className="h-36" />
+      )}
 
       <Card className="rise">
-        <p className="text-xs font-bold uppercase tracking-wide text-muted">
-          {selectedMonth ? formatMonth(selectedMonth) : '…'}
-        </p>
         {summary ? (
           <>
-            <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+            <div className="grid grid-cols-3 gap-2 text-center">
               <Stat label="In" value={`+${formatCHFRounded(summary.income)}`} className="text-mint-deep" />
               <Stat label="Spent" value={`−${formatCHFRounded(summary.expense)}`} />
               <Stat label="Saved" value={formatCHFRounded(summary.savings)} />
@@ -62,11 +50,14 @@ export function Activity({ userId }: { userId: string }) {
               <span className={`tabular font-bold ${summary.net_cashflow >= 0 ? 'text-mint-deep' : 'text-danger'}`}>
                 {formatCHFRounded(Math.abs(summary.net_cashflow))}
               </span>
-              {' after spending and saving.'}
+              {' after spending and saving'}
+              {summary.net_cashflow === bestMonth && summary.net_cashflow > 0
+                ? ' — your best month this year.'
+                : '.'}
             </p>
           </>
         ) : (
-          <Skeleton className="mt-3 h-24" />
+          <Skeleton className="h-24" />
         )}
       </Card>
 
@@ -95,6 +86,71 @@ export function Activity({ userId }: { userId: string }) {
         )}
       </Card>
     </div>
+  )
+}
+
+const CHART_HEIGHT = 84
+const ZERO_LINE = 56
+
+// Money left over after spending and saving, one bar per month. Tapping a bar selects that month.
+function LeftOverChart({
+  months,
+  selected,
+  onSelect,
+}: {
+  months: MonthlySummary[]
+  selected: string
+  onSelect: (month: string) => void
+}) {
+  const max = Math.max(1, ...months.map((m) => Math.abs(m.net_cashflow)))
+  const year = selected.slice(0, 4)
+
+  return (
+    <Card className="rise" padding="p-4 pb-3">
+      <div className="flex items-baseline justify-between">
+        <p className="text-xs font-bold uppercase tracking-wide text-muted">Left over · {year}</p>
+        <p className="text-xs font-bold text-mint-deep">{formatMonth(selected)}</p>
+      </div>
+      <div className="relative mt-2.5" style={{ height: CHART_HEIGHT }}>
+        <div className="absolute inset-x-0 h-px bg-line" style={{ top: ZERO_LINE }} />
+        <div className="absolute inset-0 grid" style={{ gridTemplateColumns: `repeat(${months.length}, 1fr)` }}>
+          {months.map((m) => {
+            const height = Math.max(2, (Math.abs(m.net_cashflow) / max) * (ZERO_LINE - 4))
+            const positive = m.net_cashflow >= 0
+            return (
+              <button
+                key={m.month}
+                type="button"
+                onClick={() => onSelect(m.month)}
+                aria-label={`${formatMonth(m.month)}: ${formatCHFRounded(m.net_cashflow)} left over`}
+                aria-pressed={m.month === selected}
+                className="relative h-full"
+              >
+                <span
+                  className={`absolute inset-x-[18%] rounded transition-opacity ${positive ? 'bg-mint' : 'bg-danger'}`}
+                  style={{
+                    top: positive ? ZERO_LINE - height : ZERO_LINE,
+                    height: positive ? height : Math.min(height, CHART_HEIGHT - ZERO_LINE - 2),
+                    opacity: m.month === selected ? 1 : 0.4,
+                  }}
+                />
+              </button>
+            )
+          })}
+        </div>
+      </div>
+      <div
+        className="mt-1 grid text-center text-[10px] font-bold"
+        style={{ gridTemplateColumns: `repeat(${months.length}, 1fr)` }}
+        aria-hidden="true"
+      >
+        {months.map((m) => (
+          <span key={m.month} className={m.month === selected ? 'text-ink' : 'text-muted'}>
+            {formatMonth(m.month, 'short').charAt(0)}
+          </span>
+        ))}
+      </div>
+    </Card>
   )
 }
 

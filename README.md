@@ -161,6 +161,7 @@ FastAPI (app/api.py) ---------> Pulse banking app (web/, React)
 ├── data/
 │   ├── recommendations.csv
 │   ├── risk_flags.csv
+│   ├── score_history.csv
 │   ├── scored_users.csv
 │   ├── segment_centroids.csv
 │   ├── synthetic_transactions.csv
@@ -188,7 +189,9 @@ FastAPI (app/api.py) ---------> Pulse banking app (web/, React)
 │       ├── clustering.py
 │       ├── credit_readiness.py
 │       ├── data_generation.py
+│       ├── explanations.py
 │       ├── features.py
+│       ├── history.py
 │       ├── presentation.py
 │       ├── recommendations.py
 │       ├── scoring.py
@@ -199,10 +202,13 @@ FastAPI (app/api.py) ---------> Pulse banking app (web/, React)
 │   ├── test_clustering.py
 │   ├── test_credit_readiness.py
 │   ├── test_data_generation.py
+│   ├── test_explanations.py
 │   ├── test_features.py
+│   ├── test_history.py
 │   ├── test_pipeline.py
 │   ├── test_recommendations.py
 │   ├── test_scoring.py
+│   ├── test_server.py
 │   └── test_validation.py
 └── web/                      # Pulse banking app (React + Vite + Tailwind)
     └── src/
@@ -290,11 +296,12 @@ curl -X POST http://localhost:8000/users/U0001/loan-affordability \
 | `GET /users` | List all synthetic user IDs. |
 | `GET /users/{user_id}` | Financial health and credit readiness scores for one user. |
 | `GET /users/{user_id}/risk-flags` | Credit readiness risk flags for one user. |
-| `GET /users/{user_id}/recommendation` | Priority recommendation for one user. |
+| `GET /users/{user_id}/recommendation` | Priority recommendation plus a three-step plan, each step with its estimated score gain, and the projected score. |
 | `GET /users/{user_id}/transactions` | Signed account movements, newest first. Filters: `type`, `month` (YYYY-MM), `limit`, `offset`. |
 | `GET /users/{user_id}/overview` | Balance, latest-month income/spending/savings and spending by category. |
 | `GET /users/{user_id}/monthly` | Monthly income, expense, savings and net cashflow. |
-| `GET /users/{user_id}/health` | Score breakdowns with weights, plus the user's segment compared to its centroid. |
+| `GET /users/{user_id}/health` | Score breakdowns with weights and points; each health dimension also carries a plain-language driver and target. Includes the user's segment compared to its centroid. |
+| `GET /users/{user_id}/health/history` | Financial Health Score month by month (expanding window, so the last month equals the current score). |
 | `GET /demo-users` | One representative customer per segment, for the app's persona switcher. |
 | `POST /users/{user_id}/loan-affordability` | Simulate a hypothetical loan against one user's profile. |
 
@@ -306,11 +313,21 @@ The API allows any origin by default because it only serves synthetic data. Set
 `web/` contains **Pulse**, a mobile-first prototype of how a customer would experience this
 analytics layer inside a banking app. Pulse is a fictional brand created for this project.
 
-- **Home**: balance, this month's money in and out, health score, the coach's top suggestion and recent activity.
-- **Activity**: month-by-month movements with income / spending / savings filters.
-- **Health**: the Financial Health Index with its weighted dimensions, the customer's money profile
-  (K-Means segment) compared to similar customers, credit readiness and monthly net cashflow.
-- **Coach**: the prescriptive recommendation, risk flags and the loan affordability simulator.
+- **Home**: balance with where this month's income went (spent, saved, left over), the health score with
+  its trend and biggest lever, the coach's suggestion with plan progress, and recent activity.
+- **Activity**: a tappable "left over" bar chart per month, the month's summary and filtered movements.
+- **Health**: the score and its 12-month history, a points breakdown ("how your score adds up") where each
+  part explains its driver and the target that earns the remaining points, the money profile (K-Means
+  segment) compared to similar customers, and a shortcut to credit readiness.
+- **Coach**: the focus area with the projected score, a three-step plan the customer can tick off (each
+  step shows its estimated score gain), risk flags linked to the plan, and the loan affordability simulator.
+
+Plan steps are rule-based: the points still available in the focus dimension are split into three equal
+milestones, and each step names the change in the customer's own numbers that reaches it, by inverting
+the same scale the score uses ([`recommendations.py`](src/swiss_financial_health/recommendations.py)).
+Drivers and targets come from [`explanations.py`](src/swiss_financial_health/explanations.py) and the
+score history from [`history.py`](src/swiss_financial_health/history.py). These three are Python-only
+presentation layers and are not mirrored in the dbt models.
 
 A persona switcher (avatar, top right) loads one synthetic customer per segment. On desktop the app
 renders inside a phone frame next to a short project introduction.
